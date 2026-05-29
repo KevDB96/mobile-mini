@@ -1,0 +1,259 @@
+:root{
+    --bg:#000000;
+    --mint:#98FFCB;
+    --darkgreen:#053827;
+    --purple:#d32b8a;
+    --pink:#ff8fcf;
+	--player-cut: 50%;
+	--player-angle: 135deg;
+	--card-1:linear-gradient(180deg,#071a14,#072022);
+	--card-2:linear-gradient(180deg, rgba(123,92,255,0.06), rgba(255,107,176,0.04));
+	--accent:var(--pink);
+	--muted:rgba(255,255,255,0.75);
+	--glass:rgba(255,255,255,0.03);
+}
+
+*{box-sizing:border-box}html,body,#app{height:100%}
+body{margin:0;font-family: 'Cinzel', 'Cinzel Decorative', 'Garamond', Georgia, serif, Inter, system-ui; color:#ffffff;-webkit-font-smoothing:antialiased; background:
+	linear-gradient(180deg, #3b0f3a 0%, var(--purple) 35%, var(--pink) 70%, var(--purple) 100%);
+}
+
+/* Smooth transitions when switching global themes */
+body{transition:background-image .6s ease, background .6s ease, background-color .6s ease}
+
+/* Split transition: left half black, right half pink/fuchsia sharp cutoff */
+.split-transition{position:fixed;inset:0;z-index:80;pointer-events:none;background:linear-gradient(90deg, #0b0b0b 0%, #0b0b0b 50%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%)}
+.split-transition.reveal-right{background:linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 50%, #0b0b0b 50%, #0b0b0b 100%)}
+
+.bg-ornate{pointer-events:none;position:fixed;inset:0;z-index:0;mix-blend-mode:multiply}
+main{max-width:520px;margin:0 auto;padding:18px;position:relative;z-index:2}
+header{display:flex;flex-direction:column;align-items:flex-start;margin-bottom:12px}
+.header-minimal{display:flex;align-items:center;width:100%;justify-content:flex-end}
+.header-minimal .settings{position:fixed}
+.settings{position:fixed;right:18px;top:18px;background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));border:none;color:var(--muted);font-size:1.2rem;padding:8px;border-radius:10px;z-index:60}
+
+/* Player strip always visible near the top to show tokens and players */
+.player-strip{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;top:auto;z-index:55;display:flex;flex-direction:column;align-items:center;gap:10px;padding:6px 8px;border-radius:999px;background:transparent}
+.player-strip .player{padding:8px 14px;border-radius:999px;background:rgba(255,255,255,0.02);display:flex;align-items:center;gap:10px;color:var(--muted);transition:opacity .22s ease,transform .22s ease}
+
+/* Hidden by default when not on spinner/turn screens */
+.player-strip.hidden{display:none !important;}
+.player-strip .player.filled{background:linear-gradient(90deg,var(--mint),var(--purple));color:#050305}
+.player-strip .player{opacity:0.45}
+.player-strip .player .icon{font-size:18px}
+.player-strip .player .name{font-weight:700}
+.player-strip .player .tokens{font-weight:800;margin-left:8px}
+.home-cta{display:flex;flex-direction:column;gap:12px;align-items:center;padding-top:40px}
+.home-cta .card{min-width:260px;padding:22px 26px;border-radius:18px;font-size:1.05rem}
+.home-cta #game-title{font-size:1.6rem;font-weight:800;letter-spacing:1px;margin:0;color:var(--mint);text-align:center}
+.home-buttons{display:flex;flex-direction:column;gap:12px;align-items:center}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{padding:18px;border-radius:14px;background:linear-gradient(180deg, rgba(11,18,32,0.8), rgba(5,56,40,0.6));border:1px solid rgba(255,255,255,0.04);color:#fff;font-size:1rem;box-shadow:0 6px 20px rgba(11,18,32,0.6)}
+.card:active{transform:scale(.995)}
+.pop{transform:scale(1.18);transition:transform .2s ease;box-shadow:0 18px 46px rgba(0,0,0,0.6)}
+.screen{display:none}
+#home .card{background:linear-gradient(90deg, rgba(211,43,138,0.16), rgba(255,143,207,0.10)); border:1px solid rgba(255,255,255,0.04); color:#fff; font-weight:700; letter-spacing:0.6px}
+.screen.active{display:block}
+.toolbar{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.toolbar .back{background:none;border:none;color:var(--muted);font-size:1rem}
+.content{padding:8px 0}
+.card-content{background:linear-gradient(180deg, rgba(0,0,0,0.35), rgba(2,10,8,0.5));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);min-height:120px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px}
+
+/* TOD flame visuals: increasing red/orange intensity */
+.tod-mild .card-content{background:linear-gradient(180deg, rgba(40,10,20,0.35), rgba(80,20,40,0.25)); box-shadow:0 8px 30px rgba(150,40,80,0.06)}
+.tod-regular .card-content{background:linear-gradient(180deg, rgba(80,12,24,0.45), rgba(170,30,60,0.28)); box-shadow:0 10px 36px rgba(200,40,80,0.10)}
+.tod-hot .card-content{background:linear-gradient(180deg, rgba(120,20,30,0.55), rgba(220,60,80,0.36)); box-shadow:0 14px 48px rgba(220,60,80,0.18); border:1px solid rgba(255,80,60,0.12)}
+.tod-very_hot .card-content{background:linear-gradient(180deg, rgba(160,30,20,0.65), rgba(255,90,60,0.44)); box-shadow:0 18px 64px rgba(255,80,60,0.24); border:1px solid rgba(255,120,60,0.18)}
+
+/* subtle flame overlay using pseudo-element for more intense levels */
+.tod-hot .card-content::after, .tod-very_hot .card-content::after{content:'';position:absolute;inset:0;border-radius:12px;pointer-events:none;background-image:radial-gradient(circle at 50% 100%, rgba(255,140,80,0.06) 0%, transparent 30%);}
+
+/* Per-view accents */
+#q36 .card-content{background:linear-gradient(180deg, rgba(9,30,22,0.8), rgba(5,20,25,0.6)); border:1px solid rgba(152,255,203,0.06); box-shadow:0 8px 30px rgba(15,60,40,0.45)}
+#tod .card-content{background:linear-gradient(180deg, rgba(123,92,255,0.06), rgba(255,107,176,0.04)); border:1px solid rgba(123,92,255,0.08); color:#fff}
+#spinner .card-content{background:linear-gradient(90deg, rgba(152,255,203,0.06), rgba(255,107,176,0.06)); border:1px solid rgba(152,255,203,0.06);}
+#turn .card-content{background:linear-gradient(180deg, rgba(10,10,20,0.6), rgba(123,92,255,0.04)); border:1px solid rgba(255,107,176,0.06)}
+#result .card-content{background:linear-gradient(180deg, rgba(20,6,30,0.6), rgba(123,92,255,0.06)); border:1px solid rgba(255,107,176,0.08)}
+
+#home .card{background:linear-gradient(90deg, rgba(123,92,255,0.18), rgba(255,107,176,0.12)); border:1px solid rgba(255,255,255,0.04); color:#fff; font-weight:700; letter-spacing:0.6px}
+
+/* Settings dropdown and modal */
+/* legacy fallback removed; .settings is fixed at top-right */
+.dropdown{position:absolute;right:18px;top:54px;background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(2,6,8,0.6));border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.6)}
+.dropdown-item{display:block;background:none;border:none;color:var(--muted);padding:8px 12px;border-radius:6px;width:100%;text-align:left}
+.dropdown-item:active{background:rgba(255,255,255,0.02)}
+.modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(0,0,0,0.45),rgba(0,0,0,0.6));z-index:40}
+.modal-content{background:linear-gradient(180deg,rgba(12,12,20,0.95),rgba(20,6,30,0.95));padding:18px;border-radius:12px;max-width:360px;width:90%;display:flex;flex-direction:column;gap:10px}
+.modal-content input{padding:8px;border-radius:8px;border:none;background:#071821;color:var(--muted)}
+.modal-content h3{margin:0;color:var(--mint)}
+.controls{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.controls button{flex:1;padding:12px;border-radius:12px;border:none;background:linear-gradient(90deg,var(--purple),var(--pink));color:#fff;font-weight:600;box-shadow:0 6px 18px rgba(123,92,255,0.12)}
+.selector{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+select{padding:8px;border-radius:8px;border:none;background:#071821;color:var(--muted)}
+.card-content p{color:rgba(255,255,255,0.95);text-align:center;margin:0}
+
+/* Themes per player */
+/* Cutie: slightly deeper purple and a less-deep black for a softer contrast */
+.theme-cutie{background:linear-gradient(var(--player-angle), #b08cff 0%, #b08cff var(--player-cut), #120517 var(--player-cut), #120517 100%)}
+.theme-zoetje{background:linear-gradient(var(--player-angle), #ff8fcf 0%, #ff8fcf var(--player-cut), var(--mint) var(--player-cut), var(--mint) 100%)}
+.theme-zoetje-pinkgreen{background:linear-gradient(var(--player-angle), var(--mint) 0%, var(--mint) var(--player-cut), #ff8fcf var(--player-cut), #ff8fcf 100%)}
+
+/* Turn-player winner emphasis */
+#turn-player.winner{display:inline-block;transform:scale(1.6);transition:transform .6s cubic-bezier(.2,.8,.2,1);color:#fff;text-shadow:0 10px 30px rgba(0,0,0,0.6);}
+#turn-player{transition:transform .4s ease,color .3s ease;text-align:center;display:inline-block}
+
+/* Truth/Dare button colors */
+#turn-truth{background:linear-gradient(90deg,#06b39e,#05a37f);color:#05110b;border:none;padding:12px 18px;border-radius:10px}
+#turn-dare{background:linear-gradient(90deg,#ff8fcf,#ff5aa8);color:#050305;border:none;padding:12px 18px;border-radius:10px}
+
+/* fade in controls */
+.controls-fade .fade-in{opacity:0;transform:translateY(6px);transition:opacity .22s ease,transform .22s ease}
+.screen.active .controls-fade .fade-in{opacity:1;transform:none}
+
+/* tokens */
+.tokens{margin-left:12px;display:inline-flex;align-items:center;gap:6px}
+.tokens .dot{width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,0.25);background:transparent;display:inline-block;opacity:0.6;transition:all .18s ease}
+.tokens .dot.on{background:linear-gradient(90deg,var(--mint),var(--purple));border-color:transparent;opacity:1;box-shadow:0 6px 18px rgba(0,0,0,0.45)}
+.tokens .dot.off{background:transparent;border-color:rgba(255,255,255,0.12);opacity:0.45}
+
+/* drink modal tweaks */
+#drink-modal .modal-content{background:linear-gradient(180deg,#20030a,#3b0f3a);color:#fff}
+
+/* Spiciness selector */
+.flame-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;padding:12px}
+.flame{display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;padding:18px;background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(0,0,0,0.06));border:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:transform .22s ease,box-shadow .22s ease}
+.flame:hover{transform:translateY(-6px);box-shadow:0 12px 36px rgba(0,0,0,0.35)}
+.flame .flame-ico{font-size:28px}
+.flame .flame-label{font-weight:700;margin-top:6px}
+.flame .flame-desc{font-size:12px;color:rgba(255,255,255,0.7)}
+.flame.mild{background:linear-gradient(180deg,#0b2b1f,#094b38)}
+.flame.regular{background:linear-gradient(180deg,#12303b,#1b5a58)}
+.flame.hot{background:linear-gradient(180deg,#4b0b09,#87221a)}
+.flame.very_hot{background:linear-gradient(180deg,#5a0010,#b0003a)}
+
+.upgrade-toast{position:fixed;left:50%;top:12%;transform:translateX(-50%);padding:12px 18px;border-radius:8px;background:linear-gradient(90deg,#ffb199,#ff5a7a);color:#200;box-shadow:0 10px 40px rgba(0,0,0,0.35);font-weight:700;z-index:1000;opacity:0;transition:opacity .28s ease,transform .28s ease}
+.upgrade-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.small{color:var(--muted);font-size:0.8rem;text-align:center;margin-top:14px}
+
+/* Utility to hide elements controlled by JS */
+.hidden{display:none !important}
+
+.timer{display:flex;align-items:center;gap:8px;margin-top:10px}
+.timer button{padding:6px 10px;border-radius:8px;background:#25404a;color:#fff;border:none}
+.timer span{font-weight:600;color:#fff}
+
+#spinner-list{list-style:none;padding:0;margin:0;display:flex;gap:14px}
+#spinner-list li{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,0.03);color:var(--muted);transition:all .18s ease}
+#spinner-list li.active{background:linear-gradient(90deg,var(--mint),var(--pink));color:#050305;transform:scale(1.08);box-shadow:0 8px 24px rgba(0,0,0,0.5)}
+
+.timer button{background:linear-gradient(90deg,var(--mint),var(--purple));color:#05110b}
+
+@media (max-width:420px){main{padding:14px}h1{font-size:1.4rem}.cards{grid-template-columns:1fr}}
+
+/* Mobile optimizations */
+@media (max-width:600px){
+	main{max-width:100%;padding:12px}
+	.home-cta{padding-top:28px}
+	.home-cta #game-title{font-size:1.4rem}
+	.home-buttons{width:100%}
+	.home-buttons .card{width:100%;min-width:unset;padding:18px 16px;border-radius:12px;font-size:1.05rem}
+	.controls{flex-direction:column}
+	.controls button{width:100%;padding:14px;border-radius:12px}
+	#spinner-list{flex-direction:column;gap:10px}
+	#spinner-list li{min-width:unset;width:100%;padding:14px}
+	.card-content{min-height:140px;padding:14px}
+	.tod-footer{left:12px;right:12px;transform:none;width:calc(100% - 24px);border-radius:12px}
+	.tod-footer select{min-width:160px}
+	.flame-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+	.flame{padding:14px;border-radius:12px}
+}
+
+/* Safe-area support for mobile bottom bars */
+.tod-footer{padding-bottom:env(safe-area-inset-bottom,8px)}
+
+/* Animations */
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes pulseGlow{0%{box-shadow:0 6px 18px rgba(123,92,255,0.12)}50%{box-shadow:0 12px 30px rgba(255,107,176,0.18)}100%{box-shadow:0 6px 18px rgba(123,92,255,0.12)}}
+@keyframes flashBG{0%{background:linear-gradient(180deg,var(--darkgreen) 0%, #050007 100%)}50%{background:linear-gradient(180deg,#361a2b,#001712)}100%{background:linear-gradient(180deg,var(--darkgreen) 0%, #050007 100%)}}
+
+.screen.active{animation:fadeIn .22s ease both}
+.controls button:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(123,92,255,0.12)}
+.controls button:active{transform:translateY(-1px) scale(.995)}
+
+#spinner-list{justify-content:center}
+#spinner-list li{min-width:110px;text-align:center}
+#spinner-list.spinning li{opacity:0.45;transition:opacity .12s linear,transform .12s linear}
+#spinner-list.spinning li.active{opacity:1;transform:scale(1.12);box-shadow:0 16px 36px rgba(0,0,0,0.6)}
+
+/* Per-step spin pulse: small -> large -> settle */
+.spin-step{animation:spinPulse .18s cubic-bezier(.2,.9,.2,1) both}
+@keyframes spinPulse{
+	0%{transform:scale(0.88)}
+	50%{transform:scale(1.14)}
+	100%{transform:scale(1.02)}
+}
+
+body.flash{animation:flashBG .45s ease both}
+
+.card{transition:transform .18s ease,box-shadow .18s ease}
+.card-content{transition:transform .22s ease,box-shadow .22s ease,background .22s ease}
+.card-content h3{color:var(--mint)}
+
+/* ToD footer selector placed at bottom of viewport while ToD screen active */
+.tod-footer{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:60;max-width:520px;width:100%;opacity:0;pointer-events:none;justify-content:center;padding:8px;transition:opacity .28s ease,transform .28s ease}
+.screen#tod.active .tod-footer{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+
+/* flame pop animation on select */
+.flame.selected{animation:flamePop .36s cubic-bezier(.2,.9,.2,1) both}
+@keyframes flamePop{0%{transform:scale(1)}30%{transform:scale(1.12)}100%{transform:scale(1)}}
+
+/* spinner area fade */
+.screen#spinner .card-content{opacity:0;transform:translateY(6px);transition:opacity .28s ease,transform .28s ease}
+.screen#spinner.active .card-content{opacity:1;transform:none}
+.tod-footer select{padding:10px 12px;border-radius:10px;border:none;background:#071821;color:var(--muted);min-width:160px}
+
+/* Typography tweaks for closer Baldur's Gate 3 look */
+h1,h2,h3{font-family:'Cinzel Decorative','Cinzel',serif;margin:0}
+h1{font-size:1.4rem;font-weight:700;letter-spacing:0.6px}
+h2{font-size:1.05rem;font-weight:700}
+h3{font-size:1rem;font-weight:600}
+.card{font-weight:700}
+.controls button{font-weight:700}
+
+/* Center the Turn screen header while keeping the back button functional */
+#turn .toolbar{position:relative}
+#turn .toolbar h2{position:absolute;left:50%;transform:translateX(-50%);}
+
+/* Instruction above the Truth/Dare buttons: allow multiple lines and center */
+#turn-prompt{white-space:pre-wrap;text-align:center;margin:6px 0;color:rgba(255,255,255,0.95)}
+
+/* Cutie-specific button colors: left=black with white text, right=light purple with black text */
+/* Cutie button overrides: truth = softer black, dare = deeper purple */
+/* Cutie button overrides: truth = softer black, dare = deeper purple */
+body.theme-cutie #turn-truth{background:#222222;color:#fff;border:none}
+body.theme-cutie #turn-dare{background:#b08cff;color:#000;border:none}
+
+/* Increased spacing between choice buttons on Turn screen */
+#turn .controls{gap:22px}
+
+/* Animated lower/fade state for unpicked spinner list item */
+#spinner-list li.unpicked{transform:translateY(6px);opacity:0.45;transition:transform 2s cubic-bezier(.2,.9,.2,1),opacity 2s ease}
+
+/* Pre-show helper: layout the screen but keep it hidden so we can measure positions */
+.screen.pre-show{display:block !important;visibility:hidden;pointer-events:none}
+
+/* Make the Turn screen fade-in slower for a smoother transition */
+.screen#turn.active{animation:fadeIn .7s ease both}
+.screen#turn.active .card-content{transition:opacity .7s ease,transform .7s ease}
+/* When Cutie theme is active, remove the subtle card border under the choice area to avoid a harsh line */
+/* When Cutie or Zoetje theme is active, ensure the Turn selection card is opaque so the diagonal divider doesn't pass through the selection area */
+/* Use themed translucent card backgrounds (never pure black) so the selection div remains clearly visible */
+body.theme-cutie #turn .card-content{background:linear-gradient(180deg, rgba(176,140,255,0.12), rgba(176,140,255,0.08));border: none;box-shadow:0 12px 40px rgba(176,140,255,0.06)}
+body.theme-zoetje #turn .card-content,
+body.theme-zoetje-pinkgreen #turn .card-content{background:linear-gradient(180deg, rgba(152,255,203,0.10), rgba(152,255,203,0.06));border: none;box-shadow:0 12px 40px rgba(80,200,150,0.06)}
+
+/* Make the settings icon minimal: translucent tappable icon without a prominent panel background */
+.settings{background:transparent;border:none;box-shadow:none;color:var(--muted);padding:6px;font-size:1.1rem}
+.settings:hover{background:rgba(255,255,255,0.03);border-radius:8px}
+.settings:active{background:rgba(255,255,255,0.04)}

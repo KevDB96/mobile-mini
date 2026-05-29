@@ -1,0 +1,123 @@
+{
+  "mild":{
+    "truth":[
+      "What's one thing you love about your partner?",
+      "One word to describe us right now?",
+      "Who's the better cook?",
+      "What small habit of your partner makes you smile?",
+      "What's your go-to comfort snack?",
+      "What's a song that always makes you think of them?",
+      "Name one thing you appreciated today.",
+      "What's a funny nickname you have for your partner?",
+      "Which movie made you laugh recently?",
+      "What's one word for your ideal weekend?"
+    ],
+    "dare":[
+      "Give a 3-second hug.",
+      "Kiss your partner's forehead.",
+      "Whisper one compliment in their ear.",
+      "Share the last photo in your camera roll.",
+      "Do a 5-second silly dance.",
+      "Say 'I appreciate you' in one sentence.",
+      "Make a funny face for 5 seconds.",
+      "High-five your partner dramatically.",
+      "Take a quick selfie together now.",
+      "Describe your partner in three words."
+    ]
+  },
+  "regular":{
+    "truth":[
+      "When did you first feel attracted to your partner?",
+      "What's a small thing your partner does that turns you on?",
+      "What's a date idea you'd like to try this month?",
+      "What's your favorite memory with your partner?",
+      "What's one thing you want to do more often together?",
+      "What's a private habit that makes you smile?",
+      "What's one thing you find irresistible about them?",
+      "What's a moment you felt proud of your partner?",
+      "What's a quick compliment you'd give them now?",
+      "What's a short fantasy about a romantic evening?",
+      "What's one boundary you expect to be respected?",
+      "When did a small gesture mean a lot to you?",
+      "What's a secret skill your partner has?",
+      "Say the first thing that comes to mind about your partner."
+    ],
+    "dare":[
+      "Give a 10-second shoulder massage.",
+      "Kiss for 5 seconds.",
+      "Whisper a flirtatious line for 5 seconds.",
+      "Slowly trace their hand for 8 seconds.",
+      "Give a sincere compliment about their smile.",
+      "Blindfold for 8 seconds and kiss the cheek.",
+      "Send a flirty one-line text to them now.",
+      "Hold hands and stare into each other's eyes for 8 seconds.",
+      "Share your favorite thing about their laugh.",
+      "Give a quick forehead kiss.",
+      "Slow dance for 10 seconds.",
+      "Name one outfit of theirs you find attractive.",
+      "Offer a one-sentence apology for something small.",
+      "Draw a quick heart on their hand."
+    ]
+  },
+  "hot":{
+    "truth":[
+      "What's the most attractive feature of your partner?",
+      "What's a brief memory that made you weak-kneed?",
+      "What's something you'd like to try together this week?",
+      "What's a short description of your favorite kiss from them?",
+      "What's one thing you find irresistibly sexy?",
+      "Describe in one sentence how they make you feel desired.",
+      "What's a quick fantasy you have about a romantic night?",
+      "What's the most flirtatious thing they've done to you?",
+      "What's a tiny gesture that instantly turns you on?",
+      "What's one sensual quality you admire in them?",
+      "What's a short, intimate memory you treasure?",
+      "Finish: 'My favorite thing to do with you is...'"
+    ],
+    "dare":[
+      "Kiss for 10 seconds.",
+      "Give a 10-second neck or cheek kiss.",
+      "Share a one-line fantasy.",
+      "Press foreheads and breathe together for 8 seconds.",
+      "Slowly trace their jawline with a fingertip for 6 seconds.",
+      "Give a sincere, intimate compliment about their body.",
+      "Whisper three things you find attractive about them.",
+      "Hold them close and say what you desire in one sentence.",
+      "Give a quick, playful nibble on the earlobe.",
+      "Describe in one sentence what you'd do on a perfect date night.",
+      "Exchange a 10-second, meaningful kiss with eye contact.",
+      "Tell them one thing you'd like to explore together soon."
+    ]
+  }
+  ,
+  "very_hot":{
+    "truth":[
+      "What's a bold fantasy you'd like to try together?",
+      "What's a memory of us that makes you ache for more?",
+      "What's one thing you'd love me to initiate right now?",
+      "Describe in one sentence the most intense moment we've shared.",
+      "What's a private desire you haven't said aloud yet?",
+      "What's one way I could make you feel irresistible?",
+      "Name a place you'd want to be alone with me tonight.",
+      "Finish: 'I want you to...'",
+      "What's one sensual thing you've imagined us doing?",
+      "What's the most electric look I've given you?",
+      "What's something you'd ask of me in a private moment?",
+      "Describe a short, steamy scene you'd enjoy together."
+    ],
+    "dare":[
+      "Give a slow, lingering kiss for 15 seconds.",
+      "Trace their collarbone slowly for 10 seconds.",
+      "Whisper a desire in their ear for 8 seconds.",
+      "Hold them close and describe one thing you want to do later.",
+      "Give a meaningful kiss while maintaining eye contact for 12 seconds.",
+      "Slowly kiss along their jaw for 8 seconds.",
+      "Lean in and breathe softly against their neck for 6 seconds.",
+      "Describe in one sentence what you'd do if you were alone together tonight.",
+      "Give a focused 10-second kiss to the place they like most.",
+      "Say one sentence about something sexy you want to try soon.",
+      "Hold them and say how they'd make tonight unforgettable.",
+      "Share one brief, daring romantic command for them to follow."
+    ]
+  }
+}

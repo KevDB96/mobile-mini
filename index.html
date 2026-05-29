@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mini Games</title>
+  <!-- Google Fonts: Cinzel Decorative + Cinzel for a Gothic/ornate look -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cinzel+Decorative&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main id="app">
+    <div class="bg-ornate" aria-hidden="true"></div>
+    <header class="header-minimal">
+      <button id="settings-btn" class="settings">⚙</button>
+      <div id="settings-menu" class="dropdown hidden">
+        <button id="settings-nicknames" class="dropdown-item">Nicknames</button>
+      </div>
+    </header>
+    <!-- Persistent player strip: shows players and their tokens across screens -->
+    <div id="player-strip" class="player-strip" aria-hidden="false"></div>
+
+    <section id="home" class="screen active">
+      <div class="home-cta">
+        <h1 id="game-title">Mini Games</h1>
+        <div class="home-buttons">
+          <button class="card" id="open-tod">Truth or Dare</button>
+          <button class="card" id="open-36">36 Questions</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="tod-select" class="screen">
+      <div class="toolbar">
+        <button class="back">← Back</button>
+        <h2>Choose Spiciness</h2>
+      </div>
+      <div class="content">
+        <div class="card-content flame-grid">
+          <button class="tod-choice flame mild" data-level="mild">
+            <div class="flame-ico">🔥</div>
+            <div class="flame-label">Mild</div>
+            <div class="flame-desc">Light & playful</div>
+          </button>
+          <button class="tod-choice flame regular" data-level="regular">
+            <div class="flame-ico">🔥🔥</div>
+            <div class="flame-label">Regular</div>
+            <div class="flame-desc">Good balance</div>
+          </button>
+          <button class="tod-choice flame hot" data-level="hot">
+            <div class="flame-ico">🔥🔥🔥</div>
+            <div class="flame-label">Hot</div>
+            <div class="flame-desc">Spicy challenges</div>
+          </button>
+          <button class="tod-choice flame very_hot" data-level="very_hot">
+            <div class="flame-ico">🌶️🌶️🌶️</div>
+            <div class="flame-label">Very Hot</div>
+            <div class="flame-desc">Daring & bold</div>
+          </button>
+        </div>
+        <div id="tod-upgrade" class="upgrade-toast hidden">Level up! Moving to <span id="tod-upgrade-level"></span></div>
+      </div>
+    </section>
+
+    <section id="q36" class="screen">
+      <div class="toolbar">
+        <button class="back">← Back</button>
+        <h2>36 Questions</h2>
+        <div id="q36-set-title" class="q36-set-title" aria-hidden="true"></div>
+      </div>
+      <div class="content">
+        <div id="q36-transition" class="card-content hidden">
+          <h3 id="q36-level">Level</h3>
+          <p id="q36-transition-text">Moving to next set of questions...</p>
+          <button id="q36-continue">Continue</button>
+        </div>
+        <div id="q36-area" class="card-content">
+          <p id="q36-text">No questions loaded. See README to add the official list.</p>
+        </div>
+        <div class="controls">
+          <button id="q36-prev">Previous</button>
+          <button id="q36-next">Next</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Players screen removed; players are fixed to Cutie & Zoetje. Start Game button opens the spinner. -->
+
+    <section id="spinner" class="screen">
+      <div class="toolbar">
+        <button class="back">← Back</button>
+        <h2>Who's Next?</h2>
+      </div>
+      <div class="content">
+        <div id="spinner-area" class="card-content">
+          <ul id="spinner-list"></ul>
+        </div>
+        <div class="controls">
+          <!-- Spinner auto-runs; manual controls removed for auto-play behavior -->
+        </div>
+      </div>
+    </section>
+
+    <section id="turn" class="screen">
+      <div class="toolbar">
+        <button class="back">← Back</button>
+        <h2>Turn</h2>
+      </div>
+      <div class="content">
+        <div class="card-content">
+          <h3 id="turn-player">Player</h3>
+          <p id="turn-prompt">Selected — choose Truth or Dare</p>
+          <div class="controls controls-fade">
+            <button id="turn-truth" class="fade-in">Truth</button>
+            <button id="turn-dare" class="fade-in">Dare</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="result" class="screen">
+      <div class="toolbar">
+        <button class="back">← Back</button>
+        <h2>Prompt</h2>
+      </div>
+      <div class="content">
+        <div class="card-content">
+          <h3 id="result-player">Player</h3>
+          <p id="result-text">Prompt appears here.</p>
+          <div id="result-timer-area" class="timer hidden">
+            <span id="result-timer-display">00:00</span>
+            <button id="result-timer-start">Start Timer</button>
+          </div>
+          <div class="controls">
+            <button id="result-success" class="hidden">Succeeded</button>
+            <button id="result-fail" class="hidden">Failed</button>
+            <button id="result-next">Next Player</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="settings-modal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Nicknames</h3>
+        <label>Player 1<input id="nickname-0" type="text" /></label>
+        <label>Player 2<input id="nickname-1" type="text" /></label>
+        <label>Max Tokens<input id="max-tokens" type="number" min="1" max="10" value="3" /></label>
+        <div class="controls">
+          <button id="save-nicknames">Save</button>
+          <button id="cancel-nicknames">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+  <div id="drink-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3 id="drink-title">Time to drink!</h3>
+      <p id="drink-text">Player B drinks now.</p>
+      <div class="controls">
+        <button id="drink-ok">OK</button>
+      </div>
+    </div>
+  </div>
+
+    <section id="tod" class="screen">
+      <div class="toolbar">
+        <button class="back">← Back</button>
+        <h2>Truth or Dare</h2>
+      </div>
+      <div class="content">
+        <div class="content-inner">
+        <div class="controls">
+          <button id="tod-truth">Truth</button>
+          <button id="tod-dare">Dare</button>
+        </div>
+        <div id="tod-area" class="card-content">
+          <p id="tod-text">Choose Truth or Dare to begin.</p>
+          <div id="tod-timer-area" class="timer hidden">
+            <span id="tod-timer-display">00:00</span>
+            <button id="tod-timer-start">Start Timer</button>
+          </div>
+        </div>
+        <div class="controls">
+          <button id="tod-next">Next</button>
+          <button id="tod-copy">Copy</button>
+        </div>
+        <!-- spice selector moved to footer -->
+        </div>
+        <div class="tod-footer">
+          <label>Spice: <select id="tod-level">
+            <option value="mild">Mild</option>
+            <option value="regular" selected>Regular</option>
+            <option value="hot">Hot</option>
+            <option value="very_hot">Very Hot</option>
+          </select></label>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
