@@ -782,6 +782,16 @@ tokens = players.map(()=>0);
 
 // Init
 load36(); loadTod(); renderPlayerList(); updateTokenUI();
+// Register service worker for PWA/offline support
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('/service-worker.js').then(reg=>{
+      console.log('ServiceWorker registered', reg.scope);
+    }).catch(err=>{
+      console.warn('ServiceWorker failed to register', err);
+    });
+  });
+}
 // Decorative heart-sprinkle: create a few randomized hearts on the home CTA
 function createHeartSprinkle(opts){
   try{

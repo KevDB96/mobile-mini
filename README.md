@@ -21,3 +21,30 @@ To publish on GitHub Pages:
 2. Alternatively, copy the contents of this folder to your repo's `docs/` and enable Pages from `main/docs`.
 
 If you'd like I can (a) add the full 36 Questions list for you (confirm you want that), or (b) wire up nicer transitions, save progress to localStorage, and add share links.
+
+## Mobile / PWA support
+
+This project now includes a minimal PWA setup so you can run the app on mobile and install it to your home screen.
+
+How to run locally (from project root):
+
+- Option A (PowerShell server included):
+```powershell
+powershell -ExecutionPolicy Bypass -File ./serve.ps1
+# then open http://<your-pc-ip>:8000 on your phone (same Wi-Fi)
+```
+
+- Option B (Node/http-server):
+```powershell
+npm install -g http-server
+npm start
+# then open http://<your-pc-ip>:5500 on your phone (same Wi-Fi)
+```
+
+Notes:
+
+- The app includes `manifest.json` and registers `service-worker.js` for basic offline caching.
+- Add icons under `/icons/` (192x192, 512x512 PNG) for a proper install icon.
+- On iOS, use the Safari share sheet → "Add to Home Screen" to install; Apple uses meta tags already added to `index.html`.
+
+If you want, I can add icons and tweak the service worker caching strategy.
