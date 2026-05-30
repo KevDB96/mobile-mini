@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#3b0f3a" />
   <title>Mini Games</title>
   <!-- Google Fonts: Cinzel Decorative + Cinzel for a Gothic/ornate look -->
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cinzel+Decorative&display=swap" rel="stylesheet">
@@ -18,7 +19,7 @@
       </div>
     </header>
     <!-- Persistent player strip: shows players and their tokens across screens -->
-    <div id="player-strip" class="player-strip" aria-hidden="false"></div>
+    <div id="player-strip" class="player-strip hidden" aria-hidden="true"></div>
 
     <section id="home" class="screen active">
       <div class="home-cta">
@@ -134,7 +135,6 @@
           <div class="controls">
             <button id="result-success" class="hidden">Succeeded</button>
             <button id="result-fail" class="hidden">Failed</button>
-            <button id="result-next">Next Player</button>
           </div>
         </div>
       </div>

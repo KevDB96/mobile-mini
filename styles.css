@@ -9,7 +9,7 @@
 	--card-1:linear-gradient(180deg,#071a14,#072022);
 	--card-2:linear-gradient(180deg, rgba(123,92,255,0.06), rgba(255,107,176,0.04));
 	--accent:var(--pink);
-	--muted:rgba(255,255,255,0.75);
+	--muted:rgba(255,255,255,0.62);
 	--glass:rgba(255,255,255,0.03);
 }
 
@@ -18,8 +18,37 @@ body{margin:0;font-family: 'Cinzel', 'Cinzel Decorative', 'Garamond', Georgia, s
 	linear-gradient(180deg, #3b0f3a 0%, var(--purple) 35%, var(--pink) 70%, var(--purple) 100%);
 }
 
+/* Stabilize layout to avoid jumps when elements toggle visibility */
+html, body { width:100%; height:100%; overflow-x:hidden; }
+main { min-height:100vh; }
+
+/* Global mobile/touch optimizations */
+html,body{touch-action:manipulation;-webkit-tap-highlight-color:rgba(0,0,0,0)}
+button, .card, .dropdown-item, select, input{min-height:44px;min-width:44px;touch-action:manipulation}
+button{font-size:1rem}
+input, select{font-size:1rem}
+
+/* Make modals full-width on small screens for easier interaction */
+@media (max-width:600px){
+	.modal-content{max-width:100%;width:calc(100% - 28px);border-radius:12px;padding:16px}
+	.modal{padding:12px}
+	.settings{right:12px;top:12px}
+	.player-strip{left:12px;right:12px;transform:none;flex-direction:row;bottom:12px;gap:8px;padding:8px;border-radius:14px;justify-content:space-between}
+	.player-strip .player{padding:10px 12px}
+	main{padding:12px}
+}
+
+/* Improve hit targets and readability on very small devices */
+@media (max-width:420px){
+	.controls button{padding:16px 14px;border-radius:12px;font-size:1rem}
+	.home-cta #game-title{font-size:1.25rem}
+	#turn-truth, #turn-dare{padding:14px 18px}
+}
+
 /* Smooth transitions when switching global themes */
-body{transition:background-image .6s ease, background .6s ease, background-color .6s ease}
+/* lengthen to match JS themeTransitionMs for a smoother fade */
+/* match the new JS theme transition duration for an even slower fade */
+body{transition:background-image 6000ms ease, background 6000ms ease, background-color 6000ms ease}
 
 /* Split transition: left half black, right half pink/fuchsia sharp cutoff */
 .split-transition{position:fixed;inset:0;z-index:80;pointer-events:none;background:linear-gradient(90deg, #0b0b0b 0%, #0b0b0b 50%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%)}
@@ -34,16 +63,26 @@ header{display:flex;flex-direction:column;align-items:flex-start;margin-bottom:1
 
 /* Player strip always visible near the top to show tokens and players */
 .player-strip{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;top:auto;z-index:55;display:flex;flex-direction:column;align-items:center;gap:10px;padding:6px 8px;border-radius:999px;background:transparent}
-.player-strip .player{padding:8px 14px;border-radius:999px;background:rgba(255,255,255,0.02);display:flex;align-items:center;gap:10px;color:var(--muted);transition:opacity .22s ease,transform .22s ease}
+.player-strip .player{padding:8px 14px;border-radius:999px;background:rgba(255,255,255,0.02);display:flex;align-items:center;gap:10px;color:var(--muted);transition:opacity 1.8s ease,transform 1.8s ease}
 
 /* Hidden by default when not on spinner/turn screens */
 .player-strip.hidden{display:none !important;}
 .player-strip .player.filled{background:linear-gradient(90deg,var(--mint),var(--purple));color:#050305}
 .player-strip .player{opacity:0.45}
-.player-strip .player .icon{font-size:18px}
+.player-strip .player .icon{font-size:18px;min-width:22px;display:inline-block}
 .player-strip .player .name{font-weight:700}
 .player-strip .player .tokens{font-weight:800;margin-left:8px}
-.home-cta{display:flex;flex-direction:column;gap:12px;align-items:center;padding-top:40px}
+
+/* Token icons in the player strip (show player's emoji as tokens) */
+.player-strip .player .token-icon{font-size:14px;display:inline-block;margin-left:6px;opacity:0.6;transition:all 320ms ease,color 320ms ease,text-shadow 320ms ease;color:rgba(255,255,255,0.85)}
+.player-strip .player .token-icon.on{opacity:1;color:#ffffff;background:transparent;transform:translateY(-2px);text-shadow:0 8px 20px rgba(0,0,0,0.6);filter:drop-shadow(0 6px 10px rgba(0,0,0,0.45))}
+.player-strip .player .token-icon.off{opacity:0.4;color:rgba(255,255,255,0.6)}
+.home-cta{display:flex;flex-direction:column;gap:12px;align-items:center;padding-top:40px;position:relative;overflow:visible}
+/* Ensure CTA content sits above decorative motif */
+.home-cta > *{position:relative;z-index:2}
+
+/* Decorative heart motif removed — kept spacing for future accents */
+
 .home-cta .card{min-width:260px;padding:22px 26px;border-radius:18px;font-size:1.05rem}
 .home-cta #game-title{font-size:1.6rem;font-weight:800;letter-spacing:1px;margin:0;color:var(--mint);text-align:center}
 .home-buttons{display:flex;flex-direction:column;gap:12px;align-items:center}
@@ -75,6 +114,13 @@ header{display:flex;flex-direction:column;align-items:flex-start;margin-bottom:1
 #turn .card-content{background:linear-gradient(180deg, rgba(10,10,20,0.6), rgba(123,92,255,0.04)); border:1px solid rgba(255,107,176,0.06)}
 #result .card-content{background:linear-gradient(180deg, rgba(20,6,30,0.6), rgba(123,92,255,0.06)); border:1px solid rgba(255,107,176,0.08)}
 
+/* Center and emphasize the prompt text in result view */
+#result-text{font-size:1.02rem;line-height:1.4;text-align:center;margin:6px 0;color:rgba(255,255,255,0.98)}
+
+/* Confirm / Fail button styles */
+#result-success{background:linear-gradient(90deg,#4de07a,#09b34a);color:#04210a;border:none;padding:10px 14px;border-radius:10px}
+#result-fail{background:linear-gradient(90deg,#ff8a8a,#ff4c4c);color:#2b0505;border:none;padding:10px 14px;border-radius:10px}
+
 #home .card{background:linear-gradient(90deg, rgba(123,92,255,0.18), rgba(255,107,176,0.12)); border:1px solid rgba(255,255,255,0.04); color:#fff; font-weight:700; letter-spacing:0.6px}
 
 /* Settings dropdown and modal */
@@ -95,24 +141,50 @@ select{padding:8px;border-radius:8px;border:none;background:#071821;color:var(--
 /* Themes per player */
 /* Cutie: slightly deeper purple and a less-deep black for a softer contrast */
 .theme-cutie{background:linear-gradient(var(--player-angle), #b08cff 0%, #b08cff var(--player-cut), #120517 var(--player-cut), #120517 100%)}
-.theme-zoetje{background:linear-gradient(var(--player-angle), #ff8fcf 0%, #ff8fcf var(--player-cut), var(--mint) var(--player-cut), var(--mint) 100%)}
-.theme-zoetje-pinkgreen{background:linear-gradient(var(--player-angle), var(--mint) 0%, var(--mint) var(--player-cut), #ff8fcf var(--player-cut), #ff8fcf 100%)}
+.theme-zoetje{background:linear-gradient(var(--player-angle), #dba3b8 0%, #dba3b8 var(--player-cut), #86d8bf var(--player-cut), #86d8bf 100%)}
+.theme-zoetje-pinkgreen{background:linear-gradient(var(--player-angle), #86d8bf 0%, #86d8bf var(--player-cut), #dba3b8 var(--player-cut), #dba3b8 100%)}
 
 /* Turn-player winner emphasis */
-#turn-player.winner{display:inline-block;transform:scale(1.6);transition:transform .6s cubic-bezier(.2,.8,.2,1);color:#fff;text-shadow:0 10px 30px rgba(0,0,0,0.6);}
+#turn-player.winner{display:inline-block;transform:scale(1.25);transition:transform .45s cubic-bezier(.2,.8,.2,1);color:#fff;text-shadow:0 10px 30px rgba(0,0,0,0.6);}
 #turn-player{transition:transform .4s ease,color .3s ease;text-align:center;display:inline-block}
+
+/* Improve token visibility on Zoetje (pink/green) themes: add white badge behind emoji */
+body.theme-zoetje-pinkgreen .player-strip .player .token-icon,
+body.theme-zoetje .player-strip .player .token-icon{
+	background: rgba(255,255,255,0.94);
+	color: #111;
+	padding: 4px 6px;
+	border-radius: 8px;
+	font-size: 15px;
+	box-shadow: 0 8px 22px rgba(0,0,0,0.48);
+	opacity: 0.96;
+	transition:all 220ms ease;
+}
+body.theme-zoetje-pinkgreen .player-strip .player .token-icon.on,
+body.theme-zoetje .player-strip .player .token-icon.on{
+	background: linear-gradient(90deg,#ffffff,#f1f1f1);
+	color: #050505;
+	opacity: 1;
+	transform:translateY(-2px);
+}
+body.theme-zoetje-pinkgreen .player-strip .player .token-icon.off,
+body.theme-zoetje .player-strip .player .token-icon.off{
+	background: rgba(255,255,255,0.68);
+	color: rgba(0,0,0,0.6);
+	opacity: 0.6;
+}
 
 /* Truth/Dare button colors */
 #turn-truth{background:linear-gradient(90deg,#06b39e,#05a37f);color:#05110b;border:none;padding:12px 18px;border-radius:10px}
 #turn-dare{background:linear-gradient(90deg,#ff8fcf,#ff5aa8);color:#050305;border:none;padding:12px 18px;border-radius:10px}
 
 /* fade in controls */
-.controls-fade .fade-in{opacity:0;transform:translateY(6px);transition:opacity .22s ease,transform .22s ease}
+.controls-fade .fade-in{opacity:0;transform:translateY(6px);transition:opacity 1.8s ease,transform 1.8s ease}
 .screen.active .controls-fade .fade-in{opacity:1;transform:none}
 
 /* tokens */
 .tokens{margin-left:12px;display:inline-flex;align-items:center;gap:6px}
-.tokens .dot{width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,0.25);background:transparent;display:inline-block;opacity:0.6;transition:all .18s ease}
+.tokens .dot{width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,0.25);background:transparent;display:inline-block;opacity:0.6;transition:all 1.8s ease}
 .tokens .dot.on{background:linear-gradient(90deg,var(--mint),var(--purple));border-color:transparent;opacity:1;box-shadow:0 6px 18px rgba(0,0,0,0.45)}
 .tokens .dot.off{background:transparent;border-color:rgba(255,255,255,0.12);opacity:0.45}
 
@@ -143,9 +215,14 @@ select{padding:8px;border-radius:8px;border:none;background:#071821;color:var(--
 .timer button{padding:6px 10px;border-radius:8px;background:#25404a;color:#fff;border:none}
 .timer span{font-weight:600;color:#fff}
 
-#spinner-list{list-style:none;padding:0;margin:0;display:flex;gap:14px}
-#spinner-list li{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,0.03);color:var(--muted);transition:all .18s ease}
-#spinner-list li.active{background:linear-gradient(90deg,var(--mint),var(--pink));color:#050305;transform:scale(1.08);box-shadow:0 8px 24px rgba(0,0,0,0.5)}
+/* Stack the result timer vertically: timer display above the start button */
+#result-timer-area.timer{flex-direction:column;align-items:center}
+#result-timer-area.timer #result-timer-display{order:0;margin-bottom:8px}
+#result-timer-area.timer #result-timer-start{order:1}
+
+#spinner-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:100px;align-items:center;justify-content:center;width:100%}
+#spinner-list li{padding:36px 56px;border-radius:18px;background:rgba(255,255,255,0.03);color:var(--muted);transition:all 320ms ease;min-width:480px;text-align:center;font-size:2.4rem;font-weight:900;box-sizing:border-box;max-width:100%}
+#spinner-list li.active{background:linear-gradient(90deg,var(--mint),var(--pink));color:#050305;transform:scale(1.22);box-shadow:0 26px 62px rgba(0,0,0,0.52)}
 
 .timer button{background:linear-gradient(90deg,var(--mint),var(--purple));color:#05110b}
 
@@ -177,17 +254,31 @@ select{padding:8px;border-radius:8px;border:none;background:#071821;color:var(--
 @keyframes pulseGlow{0%{box-shadow:0 6px 18px rgba(123,92,255,0.12)}50%{box-shadow:0 12px 30px rgba(255,107,176,0.18)}100%{box-shadow:0 6px 18px rgba(123,92,255,0.12)}}
 @keyframes flashBG{0%{background:linear-gradient(180deg,var(--darkgreen) 0%, #050007 100%)}50%{background:linear-gradient(180deg,#361a2b,#001712)}100%{background:linear-gradient(180deg,var(--darkgreen) 0%, #050007 100%)}}
 
-.screen.active{animation:fadeIn .22s ease both}
+.screen.active{animation:fadeIn 1.8s ease both}
+
+/* Fade-out helper for outgoing screens: gently hide text/content before switching views */
+.screen.fade-out .card-content,
+.screen.fade-out .card-content *{
+	opacity:0 !important;
+	transform:translateY(-8px) !important;
+	transition:opacity .7s ease,transform .7s ease;
+}
 .controls button:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(123,92,255,0.12)}
 .controls button:active{transform:translateY(-1px) scale(.995)}
 
 #spinner-list{justify-content:center}
-#spinner-list li{min-width:110px;text-align:center}
+#spinner-list li{min-width:unset}
 #spinner-list.spinning li{opacity:0.45;transition:opacity .12s linear,transform .12s linear}
 #spinner-list.spinning li.active{opacity:1;transform:scale(1.12);box-shadow:0 16px 36px rgba(0,0,0,0.6)}
 
+/* Make spinner card-content taller so stacked names sit lower on the screen */
+.screen#spinner .card-content{min-height:72vh;display:flex;align-items:flex-start;justify-content:flex-start;padding-top:22vh}
+
+/* When a picked item begins moving, fade its selected effect immediately */
+#spinner-list li.moving{opacity:0.35;transform:none;transition:opacity .28s ease,transform .28s ease}
+
 /* Per-step spin pulse: small -> large -> settle */
-.spin-step{animation:spinPulse .18s cubic-bezier(.2,.9,.2,1) both}
+.spin-step{animation:spinPulse .28s cubic-bezier(.2,.9,.2,1) both}
 @keyframes spinPulse{
 	0%{transform:scale(0.88)}
 	50%{transform:scale(1.14)}
@@ -196,8 +287,8 @@ select{padding:8px;border-radius:8px;border:none;background:#071821;color:var(--
 
 body.flash{animation:flashBG .45s ease both}
 
-.card{transition:transform .18s ease,box-shadow .18s ease}
-.card-content{transition:transform .22s ease,box-shadow .22s ease,background .22s ease}
+.card{transition:transform 1.8s ease,box-shadow 1.8s ease}
+.card-content{transition:transform 1.8s ease,box-shadow 1.8s ease,background 1.8s ease}
 .card-content h3{color:var(--mint)}
 
 /* ToD footer selector placed at bottom of viewport while ToD screen active */
@@ -224,6 +315,9 @@ h3{font-size:1rem;font-weight:600}
 /* Center the Turn screen header while keeping the back button functional */
 #turn .toolbar{position:relative}
 #turn .toolbar h2{position:absolute;left:50%;transform:translateX(-50%);}
+/* Center the Spinner screen header too */
+#spinner .toolbar{position:relative}
+#spinner .toolbar h2{position:absolute;left:50%;transform:translateX(-50%);}
 
 /* Instruction above the Truth/Dare buttons: allow multiple lines and center */
 #turn-prompt{white-space:pre-wrap;text-align:center;margin:6px 0;color:rgba(255,255,255,0.95)}
@@ -232,13 +326,18 @@ h3{font-size:1rem;font-weight:600}
 /* Cutie button overrides: truth = softer black, dare = deeper purple */
 /* Cutie button overrides: truth = softer black, dare = deeper purple */
 body.theme-cutie #turn-truth{background:#222222;color:#fff;border:none}
-body.theme-cutie #turn-dare{background:#b08cff;color:#000;border:none}
+body.theme-cutie #turn-dare{background:linear-gradient(90deg,#ffd1f2,#ff9adf);color:#3b002b;border:none;text-shadow:none}
 
 /* Increased spacing between choice buttons on Turn screen */
 #turn .controls{gap:22px}
 
 /* Animated lower/fade state for unpicked spinner list item */
-#spinner-list li.unpicked{transform:translateY(6px);opacity:0.45;transition:transform 2s cubic-bezier(.2,.9,.2,1),opacity 2s ease}
+#spinner-list li.unpicked{transform:translateY(12px);opacity:0.45;transition:transform 1.6s cubic-bezier(.2,.9,.2,1),opacity 1.6s ease}
+/* Stronger fall-and-fade animation: drop down and fade to 0 opacity */
+.fall-and-fade{transform:translateY(40px) !important;opacity:0 !important;transition:transform 360ms cubic-bezier(.2,.9,.2,1),opacity 360ms ease}
+/* directional fall animations for unpicked names */
+.fall-down{transform:translateY(88px) !important;opacity:0 !important;transition:transform 220ms cubic-bezier(.2,.9,.2,1),opacity 220ms ease}
+.fall-up{transform:translateY(-88px) !important;opacity:0 !important;transition:transform 220ms cubic-bezier(.2,.9,.2,1),opacity 220ms ease}
 
 /* Pre-show helper: layout the screen but keep it hidden so we can measure positions */
 .screen.pre-show{display:block !important;visibility:hidden;pointer-events:none}
@@ -246,10 +345,12 @@ body.theme-cutie #turn-dare{background:#b08cff;color:#000;border:none}
 /* Make the Turn screen fade-in slower for a smoother transition */
 .screen#turn.active{animation:fadeIn .7s ease both}
 .screen#turn.active .card-content{transition:opacity .7s ease,transform .7s ease}
+/* Ensure the Turn card sits above the page diagonal divider so the 'Make your choice' area remains fully visible */
+#turn .card-content{position:relative;z-index:120;background-color:rgba(0,0,0,0.60)}
 /* When Cutie theme is active, remove the subtle card border under the choice area to avoid a harsh line */
 /* When Cutie or Zoetje theme is active, ensure the Turn selection card is opaque so the diagonal divider doesn't pass through the selection area */
 /* Use themed translucent card backgrounds (never pure black) so the selection div remains clearly visible */
-body.theme-cutie #turn .card-content{background:linear-gradient(180deg, rgba(176,140,255,0.12), rgba(176,140,255,0.08));border: none;box-shadow:0 12px 40px rgba(176,140,255,0.06)}
+body.theme-cutie #turn .card-content{background:linear-gradient(180deg, rgba(176,140,255,0.12), rgba(176,140,255,0.08));border: 1px solid rgba(255,107,176,0.06);box-shadow:0 12px 40px rgba(176,140,255,0.06)}
 body.theme-zoetje #turn .card-content,
 body.theme-zoetje-pinkgreen #turn .card-content{background:linear-gradient(180deg, rgba(152,255,203,0.10), rgba(152,255,203,0.06));border: none;box-shadow:0 12px 40px rgba(80,200,150,0.06)}
 
@@ -257,3 +358,44 @@ body.theme-zoetje-pinkgreen #turn .card-content{background:linear-gradient(180de
 .settings{background:transparent;border:none;box-shadow:none;color:var(--muted);padding:6px;font-size:1.1rem}
 .settings:hover{background:rgba(255,255,255,0.03);border-radius:8px}
 .settings:active{background:rgba(255,255,255,0.04)}
+
+/* Overrides and helpers appended to improve visibility during theme swaps */
+/* Ensure token icons remain visible on bright themed backgrounds */
+.player-strip .player .token-icon{filter:drop-shadow(0 4px 8px rgba(0,0,0,0.35));transition:all .5s ease,color .5s ease,text-shadow .5s ease}
+.player-strip .player.filled .token-icon.on{color:#fff !important;text-shadow:0 3px 10px rgba(0,0,0,0.6), 0 6px 18px rgba(0,0,0,0.45)}
+
+/* Make sure themed turn cards keep a subtle border and shadow for contour */
+body.theme-zoetje #turn .card-content, body.theme-zoetje-pinkgreen #turn .card-content{border:1px solid rgba(255,255,255,0.04);box-shadow:0 12px 40px rgba(0,0,0,0.14)}
+
+/* Overlay used during theme transitions to smooth out bright gradient swaps */
+.theme-overlay{position:fixed;inset:0;z-index:140;pointer-events:none;background:rgba(0,0,0,0.92);opacity:0;mix-blend-mode:none}
+
+/* Ensure the turn player name is white and readable */
+#turn-player{ color:#ffffff !important; text-shadow:0 6px 18px rgba(0,0,0,0.6) }
+
+/* Token icon visibility tweaks */
+.player-strip .player .token-icon{font-size:16px}
+.player-strip .player .token-icon.on{color:#ffffff;opacity:1;transform:translateY(-2px);text-shadow:0 8px 22px rgba(0,0,0,0.6)}
+.player-strip .player .token-icon.off{color:rgba(255,255,255,0.28);opacity:0.65}
+
+/* Heart sprinkle: page-level decorative hearts scattered across the viewport */
+.page-heart-sprinkle{position:fixed;inset:0;pointer-events:none;z-index:0}
+.page-heart-sprinkle .heart{position:fixed;left:0;top:0;transform-origin:center center;pointer-events:none;display:inline-block;line-height:1;font-family:serif, system-ui;}
+.page-heart-sprinkle .heart{color:var(--accent);opacity:0.92;text-shadow:0 6px 18px rgba(0,0,0,0.45);} 
+.page-heart-sprinkle .heart{animation:none !important; /* hearts are static visuals now */ transform:translate(-50%,-50%) rotate(var(--rot)) scale(var(--scale,1));}
+
+/* SVG heart specifics: hollow (no fill), visible stroke */
+.page-heart-sprinkle svg.heart{width:auto;height:auto;overflow:visible;pointer-events:none;stroke-width:3px;stroke:var(--accent);fill:none;stroke-linejoin:round;stroke-linecap:round;filter:drop-shadow(0 6px 14px rgba(0,0,0,0.45));will-change:transform,opacity;animation:none !important}
+
+/* keep hearts visually behind content (main has z-index:2) */
+.page-heart-sprinkle{z-index:0}
+
+/* Smooth fade when recreating on resize */
+.page-heart-sprinkle{transition:opacity 280ms ease}
+
+@media (max-width:600px){
+	.page-heart-sprinkle svg.heart{stroke-width:2px;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.35));}
+	.page-heart-sprinkle .heart{opacity:0.85}
+}
+
+

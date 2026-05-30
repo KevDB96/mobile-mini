@@ -1,0 +1,8 @@
+{
+  "name": "mobile-mini",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "npx http-server ./ -p 5500 -c-1"
+  }
+}
