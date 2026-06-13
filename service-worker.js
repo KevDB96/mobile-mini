@@ -1,11 +1,11 @@
-const CACHE_NAME = 'mini-games-v1';
+const CACHE_NAME = 'mini-games-v2';
 const OFFLINE_URLS = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/app.js',
-  '/data/36questions.json',
-  '/data/tod_prompts.json'
+  './',
+  './index.html',
+  './styles.css',
+  './app.js',
+  './data/36questions.json',
+  './data/tod_prompts.json'
 ];
 
 self.addEventListener('install', (event) => {
@@ -33,7 +33,7 @@ self.addEventListener('fetch', (event) => {
         const copy = resp.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
         return resp;
-      }).catch(()=> caches.match('/index.html'))
+      }).catch(()=> caches.match('./index.html'))
     );
     return;
   }

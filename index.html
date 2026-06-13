@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="theme-color" content="#3b0f3a" />
   <!-- PWA / Mobile meta -->
-  <link rel="manifest" href="/manifest.json">
+  <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Mini Games">
@@ -21,6 +21,7 @@
       <button id="settings-btn" class="settings">⚙</button>
       <div id="settings-menu" class="dropdown hidden">
         <button id="settings-nicknames" class="dropdown-item">Nicknames</button>
+        <button id="settings-persist" class="dropdown-item">Persistence</button>
       </div>
     </header>
     <!-- Persistent player strip: shows players and their tokens across screens -->
@@ -46,22 +47,14 @@
           <button class="tod-choice flame mild" data-level="mild">
             <div class="flame-ico">🔥</div>
             <div class="flame-label">Mild</div>
-            <div class="flame-desc">Light & playful</div>
           </button>
           <button class="tod-choice flame regular" data-level="regular">
             <div class="flame-ico">🔥🔥</div>
             <div class="flame-label">Regular</div>
-            <div class="flame-desc">Good balance</div>
           </button>
-          <button class="tod-choice flame hot" data-level="hot">
-            <div class="flame-ico">🔥🔥🔥</div>
-            <div class="flame-label">Hot</div>
-            <div class="flame-desc">Spicy challenges</div>
-          </button>
-          <button class="tod-choice flame very_hot" data-level="very_hot">
+          <button class="tod-choice flame spicy" data-level="spicy">
             <div class="flame-ico">🌶️🌶️🌶️</div>
-            <div class="flame-label">Very Hot</div>
-            <div class="flame-desc">Daring & bold</div>
+            <div class="flame-label">Spicy</div>
           </button>
         </div>
         <div id="tod-upgrade" class="upgrade-toast hidden">Level up! Moving to <span id="tod-upgrade-level"></span></div>
@@ -114,7 +107,7 @@
       </div>
       <div class="content">
         <div class="card-content">
-          <h3 id="turn-player">Player</h3>
+          <h3 id="turn-player">{{current_nickname}}</h3>
           <p id="turn-prompt">Selected — choose Truth or Dare</p>
           <div class="controls controls-fade">
             <button id="turn-truth" class="fade-in">Truth</button>
@@ -131,7 +124,7 @@
       </div>
       <div class="content">
         <div class="card-content">
-          <h3 id="result-player">Player</h3>
+          <h3 id="result-player">{{current_nickname}}</h3>
           <p id="result-text">Prompt appears here.</p>
           <div id="result-timer-area" class="timer hidden">
             <span id="result-timer-display">00:00</span>
@@ -140,6 +133,7 @@
           <div class="controls">
             <button id="result-success" class="hidden">Succeeded</button>
             <button id="result-fail" class="hidden">Failed</button>
+            <button id="result-delete" class="danger icon-only" aria-label="Delete">✕</button>
           </div>
         </div>
       </div>
@@ -148,8 +142,8 @@
     <div id="settings-modal" class="modal hidden">
       <div class="modal-content">
         <h3>Nicknames</h3>
-        <label>Player 1<input id="nickname-0" type="text" /></label>
-        <label>Player 2<input id="nickname-1" type="text" /></label>
+        <label>Nickname 1<input id="nickname-0" type="text" /></label>
+        <label>Nickname 2<input id="nickname-1" type="text" /></label>
         <label>Max Tokens<input id="max-tokens" type="number" min="1" max="10" value="3" /></label>
         <div class="controls">
           <button id="save-nicknames">Save</button>
@@ -158,10 +152,26 @@
       </div>
     </div>
 
+    <div id="persist-modal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Persistence / Local Server</h3>
+        <p>Set the local persist server token so the app can auto-save edits.</p>
+        <label>Persist Token<input id="persist-token" type="text" placeholder="replace-with-secret-token" /></label>
+        <div style="margin-top:8px"><span id="persist-status" style="font-size:90%;color:#666"></span></div>
+        <div class="controls">
+          <button id="save-persist">Save</button>
+          <button id="fetch-persist">Fetch Token</button>
+          <button id="test-persist">Test Server</button>
+          <button id="remove-persist">Remove</button>
+          <button id="cancel-persist">Cancel</button>
+        </div>
+      </div>
+    </div>
+
   <div id="drink-modal" class="modal hidden">
     <div class="modal-content">
       <h3 id="drink-title">Time to drink!</h3>
-      <p id="drink-text">Player B drinks now.</p>
+      <p id="drink-text">{{other_nickname}} drinks now.</p>
       <div class="controls">
         <button id="drink-ok">OK</button>
       </div>
@@ -196,8 +206,7 @@
           <label>Spice: <select id="tod-level">
             <option value="mild">Mild</option>
             <option value="regular" selected>Regular</option>
-            <option value="hot">Hot</option>
-            <option value="very_hot">Very Hot</option>
+              <option value="spicy">Spicy</option>
           </select></label>
         </div>
       </div>

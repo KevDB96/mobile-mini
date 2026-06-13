@@ -34,8 +34,8 @@ function show(name){
         if(name === 'home' || !hasSpun) ps.classList.add('hidden'); else ps.classList.remove('hidden');
       }
     }catch(e){}
-    // remove theme backgrounds when navigating home
-    try{ if(name === 'home'){ document.body.classList.remove('theme-cutie','theme-zoetje-pinkgreen'); } }catch(e){}
+    // remove theme backgrounds when navigating home and reset TOD session state
+    try{ if(name === 'home'){ document.body.classList.remove('theme-cutie','theme-zoetje-pinkgreen'); resetTodSession(); } }catch(e){}
   };
 
   if(prev && prev !== screens[name] && prev.classList){
@@ -45,7 +45,57 @@ function show(name){
     activate();
   }
 }
-function applyTodLevelVisual(level){ try{ const todSection = qs('#tod'); if(!todSection) return; ['mild','regular','hot','very_hot'].forEach(l=> todSection.classList.remove('tod-'+l)); todSection.classList.add('tod-'+level); }catch(e){} }
+function applyTodLevelVisual(level){
+  try{
+    const todSection = qs('#tod'); if(!todSection) return;
+    const card = todSection.querySelector('.card-content');
+    // Gradients match the CSS theme definitions for a consistent look
+    const gradients = {
+      mild: 'linear-gradient(180deg, rgba(40,10,20,0.35), rgba(80,20,40,0.25))',
+      regular: 'linear-gradient(180deg, rgba(80,12,24,0.45), rgba(170,30,60,0.28))',
+      spicy: 'linear-gradient(180deg, rgba(140,25,30,0.6), rgba(240,70,80,0.4))'
+    };
+    // If we have a card area, perform a crossfade: overlay new gradient, fade it in,
+    // then switch the section class so the CSS takes over, then remove overlay.
+    if(card){
+      // Lock the current computed background on the TOD section so changing the
+      // tod section class won't visibly jump while we fade.
+      try{
+        const base = window.getComputedStyle(todSection).backgroundImage || window.getComputedStyle(todSection).background || window.getComputedStyle(card).backgroundImage || window.getComputedStyle(card).background;
+        if(base) todSection.style.background = base;
+        // ensure section is positioned for absolute overlay
+        if(window.getComputedStyle(todSection).position === 'static') todSection.style.position = 'relative';
+      }catch(e){}
+
+      const overlay = document.createElement('div');
+      overlay.className = 'tod-bg-overlay';
+      overlay.style.background = gradients[level] || gradients.regular;
+      overlay.style.opacity = '0';
+      todSection.appendChild(overlay);
+      // force reflow then fade in overlay
+      void overlay.offsetWidth;
+      overlay.style.opacity = '1';
+      // when the overlay transition completes, swap the tod class and remove the overlay
+      const onEnd = (ev)=>{
+        if(ev && ev.propertyName && ev.propertyName !== 'opacity') return;
+        try{
+          // swap the class now that the overlay shows the new background
+          ['mild','regular','spicy'].forEach(l=> todSection.classList.remove('tod-'+l));
+          todSection.classList.add('tod-'+level);
+          // clear inline background to let CSS rules from the new class take effect
+          try{ todSection.style.background = ''; }catch(e){}
+          if(overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        }catch(e){}
+        overlay.removeEventListener('transitionend', onEnd);
+      };
+      overlay.addEventListener('transitionend', onEnd);
+    }else{
+      // fallback: just swap the class
+      ['mild','regular','spicy'].forEach(l=> todSection.classList.remove('tod-'+l));
+      todSection.classList.add('tod-'+level);
+    }
+  }catch(e){}
+}
 
 // Navigation
 on('#open-36','click',()=>{show('q36')});
@@ -57,13 +107,27 @@ let q36 = []; // expected: [{title:'Set 1', questions:[...]}, ...]
 let q36Set = 0;
 let q36Index = 0;
 
-let todPrompts = {mild:{truth:[],dare:[]},regular:{truth:[],dare:[]},hot:{truth:[],dare:[]},very_hot:{truth:[],dare:[]}};
-let usedTod = {mild:{truth:new Set(),dare:new Set()},regular:{truth:new Set(),dare:new Set()},hot:{truth:new Set(),dare:new Set()},very_hot:{truth:new Set(),dare:new Set()}};
+let todPrompts = {mild:{truth:[],dare:[]},regular:{truth:[],dare:[]},spicy:{truth:[],dare:[]}};
+// Track used prompts per-level (legacy) and a global session-level set to avoid repeats
+let usedTod = {mild:{truth:new Set(),dare:new Set()},regular:{truth:new Set(),dare:new Set()},spicy:{truth:new Set(),dare:new Set()}};
+let usedTodSession = new Set(); // stores prompt text used during the current session
+
+function resetTodSession(){
+  // Clear the per-level used indexes and the session-level used prompt strings
+  try{
+    ['mild','regular','spicy'].forEach(l=>{ if(usedTod[l]){ usedTod[l].truth = new Set(); usedTod[l].dare = new Set(); } });
+    usedTodSession.clear();
+  }catch(e){ console.warn('Failed to reset TOD session state', e); }
+}
 
 // Players & spinner state (fixed couple)
 let players = ['Cutie','Zoetje'];
 let spinnerIndex = 0;
 let isSpinning = false;
+// Track last TOD selection for deletion/redo
+let lastTodChoice = null; // {prompt, level, index}
+let lastTodType = null; // 'truth' or 'dare'
+let lastTodActor = null;
 // tokens
 let tokens = [0,0];
 let maxTokens = 3;
@@ -125,8 +189,73 @@ on('#q36-continue','click',()=>{
 
 // Load TOD prompts
 async function loadTod(){
-  try{ const r = await fetch('data/tod_prompts.json'); if(!r.ok) throw 0; todPrompts = await r.json(); }
-  catch(e){ console.warn('Failed to load tod_prompts.json — ensure the app is served over HTTP and that data/tod_prompts.json exists.'); todPrompts = {mild:{truth:[],dare:[]},regular:{truth:[],dare:[]},hot:{truth:[],dare:[]},very_hot:{truth:[],dare:[]}}; }
+  try{ const r = await fetch('data/tod_prompts.json'); if(!r.ok) throw 0; todPrompts = await r.json();
+    // Normalize prompts: convert string entries to objects { text, asked: [] }
+    ['mild','regular','spicy'].forEach(l=>{
+      ['truth','dare'].forEach(t=>{
+        const arr = (todPrompts[l] && todPrompts[l][t]) || [];
+        todPrompts[l] = todPrompts[l] || {};
+        todPrompts[l][t] = (arr || []).map(item=>{
+          if(!item) return null;
+          if(typeof item === 'string') return { text: item, asked: [] };
+          // already object
+          if(item.text) item.asked = item.asked || [];
+          return item;
+        }).filter(Boolean);
+      });
+    });
+  }
+  catch(e){ console.warn('Failed to load tod_prompts.json — ensure the app is served over HTTP and that data/tod_prompts.json exists.'); todPrompts = {mild:{truth:[],dare:[]},regular:{truth:[],dare:[]},spicy:{truth:[],dare:[]}}; }
+}
+
+function rebuildUsedTodIndexes(){
+  try{
+    ['mild','regular','spicy'].forEach(l=>{
+      ['truth','dare'].forEach(t=>{
+        usedTod[l][t] = new Set();
+        const list = (todPrompts[l] && todPrompts[l][t]) || [];
+        list.forEach((p,i)=>{ if(usedTodSession.has(p && p.text)) usedTod[l][t].add(i); });
+      });
+    });
+  }catch(e){ console.warn('Failed to rebuild used TOD indexes', e); }
+}
+
+async function persistTodPrompts(){
+  // Attempt File System Access API first, fallback to download
+  const dataStr = JSON.stringify(todPrompts, null, 2);
+  // Try local persist server (localhost) first if token present in localStorage
+  try{
+    const token = localStorage.getItem('persist_token');
+    if(token){
+      // try sensible hosts in order: the host serving the app (useful when mobile opens app from PC), then localhost addresses
+      const hosts = [];
+      try{ const hn = (window && window.location && window.location.hostname) ? window.location.hostname : null; if(hn) hosts.push(hn); }catch(e){}
+      hosts.push('127.0.0.1','localhost');
+      for(const h of hosts){
+        try{
+          const url = `http://${h}:34000/persist-tod`;
+          const r = await fetch(url, { method:'POST', headers: { 'Content-Type':'application/json', 'X-Persist-Token': token }, body: JSON.stringify({ todPrompts, commitMessage: 'Auto-persist tod_prompts' }), });
+          if(r && r.ok){ try{ const j = await r.json(); console.log('Local persist responded', j, 'host', h); }catch(e){} return true; }
+        }catch(e){ console.warn('Local persist server not available at', h, e); }
+      }
+    }
+  }catch(e){/*ignore*/}
+  try{
+    if(window.showSaveFilePicker){
+      const handle = await window.showSaveFilePicker({ suggestedName: 'tod_prompts.json', types:[{ description: 'JSON', accept: {'application/json': ['.json']} }] });
+      const writable = await handle.createWritable();
+      await writable.write(dataStr);
+      await writable.close();
+      return true;
+    }
+  }catch(e){ /* fallthrough to download fallback */ }
+  try{
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'tod_prompts.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    alert('A copy of updated tod_prompts.json was downloaded. Replace data/tod_prompts.json in your project to persist the deletion.');
+    return false;
+  }catch(e){ console.warn('Failed to persist tod_prompts.json', e); return false; }
 }
 
 // Timer utilities
@@ -244,7 +373,6 @@ function makePromptExplicit(text, actor, other){ if(!text) return text; try{ // 
     // If the prompt explicitly contains the actor's name at the start (e.g. "Zoetje, ...")
     // or contains the actor's possessive ("Zoetje's ...") and the actor is the current turn player,
     // prefer natural 'You'/'your' phrasing so prompts read naturally to the person whose turn it is.
-    function esc(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
     try{
       const a = actor || '';
       if(a){
@@ -268,20 +396,17 @@ function makePromptExplicit(text, actor, other){ if(!text) return text; try{ // 
 function finalizePrompt(rawText, actor, other, directedAtPlayer){
   if(!rawText) return rawText;
   try{
-    // First, apply pronoun normalization
-    let t = makePromptExplicit(rawText, actor, other) || rawText;
-    // If the prompt is directed at the picked player, prefer 'you'/'your' phrasing
-    if(directedAtPlayer && actor){
-      try{ const esc = (s)=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-        const a = esc(actor);
-        // possessive -> your
-        t = t.replace(new RegExp(a + "(?:'s|’s)\\b","ig"), 'your');
-        // leading 'Actor, ...' -> 'You, ...' or start -> 'You'
-        t = t.replace(new RegExp('^'+a+'(\s*,|\s+)','i'), 'You$1');
-        // remaining standalone actor -> you
-        t = t.replace(new RegExp('\\b'+a+'\\b','ig'), 'you');
-      }catch(e){}
-    }
+    // Replace template tokens (if present) and normalize em-dashes before pronoun processing
+    let replaced = (rawText || '');
+    try{ replaced = replaced.replace(/\{\{\s*current_nickname\s*\}\}/ig, actor || 'You'); }catch(e){}
+    try{ replaced = replaced.replace(/\{\{\s*other_nickname\s*\}\}/ig, other || 'Someone'); }catch(e){}
+    // normalize em-dash to comma for smoother sentence flow
+    replaced = replaced.replace(/—/g, ',');
+    // Start with the replaced text; we'll explicitly convert actor mentions
+    // to second-person later so prompts read like: "Actor, ... you ..."
+    let t = replaced;
+    // Do not convert actor names to 'you' — keep nicknames visible for clarity.
+    // (We still applied pronoun normalization above to replace generic 'you' with the actor name.)
     // common grammar fixes: replace awkward 'yourself' in contexts like 'has never let yourself' -> 'has never let you'
     t = t.replace(/has never let yourself/ig, 'has never let you');
     t = t.replace(/never let yourself/ig, 'never let you');
@@ -292,44 +417,123 @@ function finalizePrompt(rawText, actor, other, directedAtPlayer){
     t = t.replace(/\s+([?.!,;:])/g,'$1');
     // normalize whitespace
     t = t.replace(/\s{2,}/g,' ');
+    // Capitalize first letter and ensure sentence ends with punctuation
+    try{
+      t = t.trim();
+      if(t.length>0){
+        t = t.charAt(0).toUpperCase() + t.slice(1);
+        if(!/[.?!]$/.test(t)) t = t + '.';
+      }
+    }catch(e){}
+
+    // If we have an `actor` name, prefer addressing the prompt as
+    // "Actor, ..." and convert in-body references to second-person
+    // pronouns (you/your) so prompts read like: "Cutie, what's something you..."
+    try{
+      if(actor && actor.trim()){
+        function esc(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+        const a = actor.trim();
+        // remove any leading actor or 'You' tokens already present
+        t = t.replace(new RegExp('^(?:' + esc(a) + '|You)[:,\s]*','i'), '');
+        // replace possessive actor's -> your
+        t = t.replace(new RegExp(esc(a) + "(?:'s|’s)\\b", 'ig'), 'your');
+        // replace standalone actor name with 'you'
+        t = t.replace(new RegExp('\\b' + esc(a) + '\\b','ig'), 'you');
+        // lowercase first letter of body so it follows the actor name naturally
+        t = t.replace(/^\s*/, '');
+        if(t.length>0) t = t.charAt(0).toLowerCase() + t.slice(1);
+        t = (a + ', ' + t).trim();
+        if(!/[.?!]$/.test(t)) t = t + '.';
+      }
+    }catch(e){}
+
     return t.trim();
   }catch(e){ return rawText; }
 }
 
 function setupTimerForTod(text){ clearTimer(); const seconds = parseSecondsFromText(text); const area = qs('#tod-timer-area'); const display = qs('#tod-timer-display'); const startBtn = qs('#tod-timer-start'); const nextBtn = qs('#tod-next'); if(seconds>0){ area.classList.remove('hidden'); display.textContent = formatMMSS(seconds); nextBtn.disabled = true; startBtn.disabled = false; startBtn.onclick = ()=> startCountdown(seconds, display, ()=>{}, startBtn, nextBtn); } else { area.classList.add('hidden'); nextBtn.disabled = false; } }
 
-function pickTodPrompt(level, type){
+function pickTodPrompt(level, type, actor){
+  const levels = ['mild','regular','spicy'];
   const list = (todPrompts[level] && todPrompts[level][type]) || [];
   if(!list.length) return null;
-  const used = usedTod[level][type];
-  let available = list.map((v,i)=>i).filter(i=>!used.has(i));
+  // prefer prompts not used in this session
+  let available = list.map((v,i)=>i).filter(i=>!usedTodSession.has(list[i] && list[i].text));
+  // filter out prompts already asked to this actor (persistent across sessions)
+  if(actor){ available = available.filter(i=>{ const p = list[i]; return !(p && Array.isArray(p.asked) && p.asked.includes(actor)); }); }
   if(available.length===0){
-    // attempt to auto-level-up to the next hotter level that has unused prompts
-    const levels = ['mild','regular','hot','very_hot'];
+    // try hotter levels for unused prompts first
     const cur = levels.indexOf(level);
     for(let ni=cur+1; ni<levels.length; ni++){
       const nl = levels[ni];
       const nlist = (todPrompts[nl] && todPrompts[nl][type]) || [];
       if(nlist.length===0) continue;
-      const nused = usedTod[nl][type];
-      const navail = nlist.map((v,i)=>i).filter(i=>!nused.has(i));
+      const navail = nlist.map((v,i)=>i).filter(i=>!usedTodSession.has(nlist[i] && nlist[i].text));
       if(navail.length>0){
-        // switch selected level for future picks and notify UI
         if(qs('#tod-level')) qs('#tod-level').value = nl;
         applyTodLevelVisual(nl);
         showUpgradeToast(nl);
-        const choiceIndex = navail[Math.floor(Math.random()*navail.length)];
-        nused.add(choiceIndex);
-        return nlist[choiceIndex];
+        // filter by actor when promoting levels
+        const filteredNavail = actor ? navail.filter(i=>{ const p = nlist[i]; return !(p && Array.isArray(p.asked) && p.asked.includes(actor)); }) : navail;
+        if(filteredNavail.length === 0) { /* no candidate here, continue searching */ };
+        const choiceIndex = (filteredNavail.length>0 ? filteredNavail : navail)[Math.floor(Math.random()*((filteredNavail.length>0?filteredNavail:navail).length))];
+        usedTod[nl][type].add(choiceIndex);
+        usedTodSession.add(nlist[choiceIndex] && nlist[choiceIndex].text);
+        return { promptObj: nlist[choiceIndex], level: nl, index: choiceIndex, type };
       }
     }
-    // if no higher unused prompts, reset current level and reuse
-    used.clear();
+    // search across all levels for any unused prompt for this type
+    const crossAvail = [];
+    for(let li=0; li<levels.length; li++){
+      const ll = levels[li];
+      const llist = (todPrompts[ll] && todPrompts[ll][type]) || [];
+      llist.forEach((p,i)=>{ if(!usedTodSession.has(p && p.text)){
+          if(actor && Array.isArray(p.asked) && p.asked.includes(actor)) return; // skip prompts already asked to actor
+          crossAvail.push({level:ll,index:i,promptObj:p});
+        }
+      });
+    }
+    if(crossAvail.length>0){
+      const chosen = crossAvail[Math.floor(Math.random()*crossAvail.length)];
+      usedTod[chosen.level][type].add(chosen.index);
+      usedTodSession.add(chosen.promptObj && chosen.promptObj.text);
+      if(qs('#tod-level')) qs('#tod-level').value = chosen.level;
+      applyTodLevelVisual(chosen.level);
+      return { promptObj: chosen.promptObj, level: chosen.level, index: chosen.index, type };
+    }
+    // if every prompt has been used in this session, clear the session set (allow reuse)
+    usedTodSession.clear();
+    // fall back to using all prompts at the requested level
     available = list.map((v,i)=>i);
   }
   const idx = available[Math.floor(Math.random()*available.length)];
-  used.add(idx);
-  return list[idx];
+  usedTod[level][type].add(idx);
+  usedTodSession.add(list[idx] && list[idx].text);
+  return { promptObj: list[idx], level, index: idx, type };
+}
+
+// Mark that a prompt was asked to a player; if it's been asked to both players, remove it permanently
+async function markPromptAsked(pick, playerName){
+  try{
+    if(!pick || !pick.promptObj) return;
+    const lvl = pick.level; const typ = pick.type;
+    const list = (todPrompts[lvl] && todPrompts[lvl][typ]) || [];
+    const obj = list[pick.index] || pick.promptObj;
+    if(!obj) return;
+    obj.asked = obj.asked || [];
+    if(!obj.asked.includes(playerName)) obj.asked.push(playerName);
+    // track used prompt in this session
+    usedTodSession.add(obj.text);
+    rebuildUsedTodIndexes();
+    // if asked to both players, delete permanently and persist
+    if(obj.asked.length >= 2){
+      const idx = list.findIndex(p=>p === obj || (p && p.text === obj.text));
+      if(idx >= 0){ list.splice(idx,1); }
+      // remove from session used set
+      try{ usedTodSession.delete(obj.text); }catch(e){}
+      await persistTodPrompts();
+    }
+  }catch(e){ console.warn('Failed to mark prompt asked', e); }
 }
 
 // Player management
@@ -338,7 +542,6 @@ function renderPlayerList(){
   if(ul){ ul.innerHTML=''; players.forEach((p,idx)=>{ const li = document.createElement('li'); li.textContent = p; ul.appendChild(li); }); }
   // spinner list
   const sl = qs('#spinner-list');
-  if(sl){ sl.innerHTML=''; players.forEach((p,idx)=>{ const li = document.createElement('li'); li.innerHTML = `<span class="name">${p}</span><span class="tokens" data-idx="${idx}">`+ '◦'.repeat(tokens[idx]) + `</span>`; li.dataset.index = idx; sl.appendChild(li); }); }
   // persistent player strip
   const ps = qs('#player-strip');
   if(sl){ // spinner list: names only (tokens only shown in bottom player-strip)
@@ -440,17 +643,13 @@ function finalizeSpinner(idx){
   setTimeout(()=>{ if(chosenEl) chosenEl.classList.remove('pop'); }, 700);
   const chosen = chosenEl ? chosenEl.querySelector('.name')?.textContent || chosenEl.textContent : null;
   if(chosen) qs('#turn-player').textContent = chosen;
-  // set a slightly randomized diagonal cut and angle for the theme
+  // keep the diagonal divider static during theme swaps to avoid rotation/hop
   let themeClass = null;
-  try{
-    const cut = (40 + Math.floor(Math.random()*21)) + '%';
-    const angle = (110 + Math.floor(Math.random()*61)) + 'deg';
-    document.documentElement.style.setProperty('--player-cut', cut);
-    document.documentElement.style.setProperty('--player-angle', angle);
-  }catch(e){}
   // choose theme class; apply new theme without removing the old one immediately
   // so the CSS background transition can interpolate smoothly without flashes.
   const body = document.body;
+  // Ensure we don't animate gradient angle or background-image — only fade color.
+  try{ document.body.style.setProperty('transition','background-color 360ms ease','important'); }catch(e){}
   if(chosen === players[0]) themeClass = 'theme-cutie'; else themeClass = 'theme-zoetje-pinkgreen';
   try{
     const prevTheme = body.classList.contains('theme-cutie') ? 'theme-cutie' : (body.classList.contains('theme-zoetje-pinkgreen') ? 'theme-zoetje-pinkgreen' : null);
@@ -639,6 +838,72 @@ on('#settings-nicknames','click',()=>{
   modal.classList.remove('hidden');
 });
 
+on('#settings-persist','click',()=>{
+  if(settingsMenu) settingsMenu.classList.add('hidden');
+  const modal = qs('#persist-modal');
+  try{ qs('#persist-token').value = localStorage.getItem('persist_token') || ''; }catch(e){}
+  try{ const st = qs('#persist-status'); if(st) st.textContent = localStorage.getItem('persist_token') ? 'Token is set' : 'No token configured'; }catch(e){}
+  modal.classList.remove('hidden');
+});
+
+on('#cancel-persist','click',()=>{ qs('#persist-modal').classList.add('hidden'); });
+on('#save-persist','click',()=>{
+  const v = (qs('#persist-token').value||'').trim();
+  try{ if(v) localStorage.setItem('persist_token', v); else localStorage.removeItem('persist_token'); }catch(e){}
+  try{ const st = qs('#persist-status'); if(st) st.textContent = v ? 'Token saved' : 'Token removed'; }catch(e){}
+  qs('#persist-modal').classList.add('hidden');
+});
+on('#remove-persist','click',()=>{ try{ localStorage.removeItem('persist_token'); }catch(e){} try{ const st = qs('#persist-status'); if(st) st.textContent = 'Token removed'; }catch(e){} qs('#persist-modal').classList.add('hidden'); });
+on('#test-persist','click', async ()=>{
+  const st = qs('#persist-status'); if(st) st.textContent = 'Testing...';
+  const token = (qs('#persist-token').value||'').trim() || localStorage.getItem('persist_token');
+  if(!token){ if(st) st.textContent = 'No token provided'; return; }
+  try{
+    const hosts = [];
+    try{ const hn = (window && window.location && window.location.hostname) ? window.location.hostname : null; if(hn) hosts.push(hn); }catch(e){}
+    hosts.push('127.0.0.1','localhost');
+    let ok=false;
+    for(const h of hosts){
+      try{
+        const url = `http://${h}:34000/persist-tod`;
+        const res = await fetch(url, { method:'POST', headers: { 'Content-Type':'application/json', 'X-Persist-Token': token }, body: JSON.stringify({ todPrompts, commitMessage: 'Persist token test from app' }) });
+        if(res && res.ok){ try{ const j = await res.json(); if(st) st.textContent = 'Server OK ('+h+')'; }catch(e){ if(st) st.textContent = 'Server responded'; } ok=true; break; }
+        else { try{ const txt = await res.text(); if(st) st.textContent = 'Server error: '+ (txt||res.status); }catch(e){ if(st) st.textContent = 'Server error'; } }
+      }catch(e){ /* try next host */ }
+    }
+    if(!ok && st) st.textContent = st.textContent || 'Failed to reach server';
+  }catch(e){ if(st) st.textContent = 'Failed to reach server'; }
+});
+
+on('#fetch-persist','click', async ()=>{
+  const st = qs('#persist-status'); if(st) st.textContent = 'Fetching token...';
+  try{
+    const hosts = [];
+    try{ const hn = (window && window.location && window.location.hostname) ? window.location.hostname : null; if(hn) hosts.push(hn); }catch(e){}
+    hosts.push('127.0.0.1','localhost');
+    for(const h of hosts){
+      try{
+        const url = `http://${h}:34000/fetch-token`;
+        const res = await fetch(url, { method: 'GET' });
+        if(!res) continue;
+        if(res.ok){
+          const j = await res.json();
+          if(j && j.ok && j.token){ try{ localStorage.setItem('persist_token', j.token); }catch(e){}
+            if(st) st.textContent = 'Token fetched and saved';
+            try{ qs('#persist-token').value = j.token; }catch(e){}
+            setTimeout(()=>{ try{ qs('#persist-modal').classList.add('hidden'); }catch(e){} }, 600);
+            return;
+          }
+          if(st) st.textContent = 'Invalid response from server';
+          return;
+        } else {
+          try{ const txt = await res.text(); if(st) st.textContent = 'Fetch failed: '+(txt||res.status); }catch(e){ if(st) st.textContent = 'Fetch failed'; }
+        }
+      }catch(e){ /* try next host */ }
+    }
+  }catch(e){ if(st) st.textContent = 'Unable to reach persist server'; }
+});
+
 on('#cancel-nicknames','click',()=>{ qs('#settings-modal').classList.add('hidden'); });
 on('#save-nicknames','click',()=>{
   const n0 = qs('#nickname-0').value.trim() || 'Cutie';
@@ -651,7 +916,9 @@ on('#save-nicknames','click',()=>{
 on('#turn-truth','click',()=>{
   const player = qs('#turn-player').textContent;
   const level = qs('#tod-level').value;
-  const promptRaw = pickTodPrompt(level,'truth') || 'No prompt available';
+  const pick = pickTodPrompt(level,'truth', player) || null;
+  const promptRaw = pick && pick.promptObj ? pick.promptObj.text : 'No prompt available';
+  lastTodChoice = pick; lastTodType = 'truth'; lastTodActor = player;
   const other = players.find(p=>p!==player) || players[0];
   const prompt = finalizePrompt(promptRaw, player, other, true);
   qs('#result-player').textContent = player;
@@ -663,11 +930,15 @@ on('#turn-truth','click',()=>{
   if(fail) fail.textContent = 'Liar, liar, pants on fire';
   setupTimerForResult(prompt);
   show('result');
+  // mark asked asynchronously
+  try{ markPromptAsked(pick, player); }catch(e){}
 });
 on('#turn-dare','click',()=>{
   const player = qs('#turn-player').textContent;
   const level = qs('#tod-level').value;
-  const promptRaw = pickTodPrompt(level,'dare') || 'No prompt available';
+  const pick = pickTodPrompt(level,'dare', player) || null;
+  const promptRaw = pick && pick.promptObj ? pick.promptObj.text : 'No prompt available';
+  lastTodChoice = pick; lastTodType = 'dare'; lastTodActor = player;
   const other = players.find(p=>p!==player) || players[0];
   const prompt = finalizePrompt(promptRaw, player, other, true);
   qs('#result-player').textContent = player;
@@ -678,6 +949,7 @@ on('#turn-dare','click',()=>{
   if(fail) fail.textContent = 'Coward!!';
   setupTimerForResult(prompt);
   show('result');
+  try{ markPromptAsked(pick, player); }catch(e){}
 });
 
 on('#result-next','click',()=>{ setTimeout(()=> show('spinner'), 800); });
@@ -716,41 +988,81 @@ on('#result-fail','click',()=>{
   setTimeout(()=> show('spinner'), 800);
 });
 
+on('#result-delete','click', async ()=>{
+  try{
+    const delBtn = qs('#result-delete');
+    // ask for confirmation first
+    const ok = confirm('Delete this prompt? This action cannot be undone.');
+    if(!ok){ if(delBtn) delBtn.disabled = false; return; }
+    if(delBtn) delBtn.disabled = true;
+    // hide confirm/fail if visible
+    try{ const s = qs('#result-success'); const f = qs('#result-fail'); if(s) s.classList.add('hidden'); if(f) f.classList.add('hidden'); }catch(e){}
+    if(!lastTodChoice || !lastTodType){ alert('No prompt metadata available to delete.'); if(delBtn) delBtn.disabled = false; return; }
+    const lvl = lastTodChoice.level;
+    const typ = lastTodType;
+    const raw = (lastTodChoice && lastTodChoice.promptObj) ? lastTodChoice.promptObj.text : (lastTodChoice && lastTodChoice.prompt) || null;
+    // remove prompt from in-memory prompts array by index if available
+    const list = (todPrompts[lvl] && todPrompts[lvl][typ]) || [];
+    const idx = (lastTodChoice && typeof lastTodChoice.index === 'number') ? lastTodChoice.index : list.findIndex(p=>p && (p.text === raw));
+    if(idx >= 0){ list.splice(idx,1); }
+    // remove from session-used set and rebuild index trackers
+    try{ if(raw) usedTodSession.delete(raw); rebuildUsedTodIndexes(); }catch(e){}
+    // persist change (FileSystem API or download fallback)
+    await persistTodPrompts();
+    // immediately pick next prompt for same player/type
+    const player = lastTodActor || qs('#result-player').textContent || players[0];
+    const other = players.find(p=>p!==player) || players[0];
+    const nextPick = pickTodPrompt(lvl, typ) || null;
+    const nextRaw = nextPick && nextPick.promptObj ? nextPick.promptObj.text : null;
+    lastTodChoice = nextPick; lastTodType = typ; lastTodActor = player;
+    const nextPrompt = finalizePrompt(nextRaw, player, other, true) || nextRaw || 'No prompts available';
+    qs('#result-text').textContent = nextPrompt;
+    setupTimerForResult(nextPrompt);
+    if(delBtn) delBtn.disabled = false;
+  }catch(e){ console.warn('Failed to delete prompt', e); try{ if(qs('#result-delete')) qs('#result-delete').disabled = false; }catch(_){} }
+});
+
 on('#drink-ok','click',()=>{ qs('#drink-modal').classList.add('hidden'); try{ show('spinner'); }catch(e){} });
 
 // Quick TOD buttons on main page (keeps backward compatibility)
 on('#tod-truth','click',()=>{
   const level = qs('#tod-level').value;
-  const pRaw = pickTodPrompt(level,'truth');
+  const pick = pickTodPrompt(level,'truth');
+  const pRaw = pick && pick.promptObj ? pick.promptObj.text : null;
   const actor = players[0] || 'Player 1';
   const other = players[1] || 'Player 2';
   const p = finalizePrompt(pRaw, actor, other, true) || pRaw || 'No prompts';
   qs('#tod-text').textContent = p;
   setupTimerForTod(p);
+  try{ markPromptAsked(pick, actor); }catch(e){}
 });
 on('#tod-dare','click',()=>{
   const level = qs('#tod-level').value;
-  const pRaw = pickTodPrompt(level,'dare');
+  const pick = pickTodPrompt(level,'dare');
+  const pRaw = pick && pick.promptObj ? pick.promptObj.text : null;
   const actor = players[0] || 'Player 1';
   const other = players[1] || 'Player 2';
   const p = finalizePrompt(pRaw, actor, other, true) || pRaw || 'No prompts';
   qs('#tod-text').textContent = p;
   setupTimerForTod(p);
+  try{ markPromptAsked(pick, actor); }catch(e){}
 });
 on('#tod-next','click',()=>{
   const t = Math.random()>0.5?'truth':'dare';
   const level = qs('#tod-level').value;
-  const pRaw = pickTodPrompt(level,t);
+  const pick = pickTodPrompt(level,t);
+  const pRaw = pick && pick.promptObj ? pick.promptObj.text : null;
   const actor = players[0] || 'Player 1';
   const other = players[1] || 'Player 2';
   const p = finalizePrompt(pRaw,actor,other,true) || pRaw || 'No prompts';
   qs('#tod-text').textContent = p;
   setupTimerForTod(p);
+  try{ markPromptAsked(pick, actor); }catch(e){}
 });
 on('#tod-copy','click',()=>{ const txt = qs('#tod-text').textContent; if(!txt) return; navigator.clipboard.writeText(txt).then(()=>alert('Copied!')).catch(()=>{}); });
 
 // update visuals when level changes
-on('#tod-level','change',()=>{ const lv = qs('#tod-level').value; applyTodLevelVisual(lv); });
+on('#tod-level','change',()=>{ try{ resetTodSession(); }catch(e){} const lv = qs('#tod-level').value; applyTodLevelVisual(lv); });
 
 // Quick change spice button removed — dropdown lives in footer now
 
@@ -769,7 +1081,6 @@ document.addEventListener('click', (e)=>{
 
 function showUpgradeToast(level){ try{ const t = qs('#tod-upgrade'); const l = qs('#tod-upgrade-level'); if(!t) return; if(l) l.textContent = level; t.classList.remove('hidden'); t.classList.add('show'); setTimeout(()=>{ t.classList.remove('show'); t.classList.add('hidden'); }, 2200); }catch(e){}
 
-}
 
 
 // Load saved settings if any
@@ -782,10 +1093,53 @@ tokens = players.map(()=>0);
 
 // Init
 load36(); loadTod(); renderPlayerList(); updateTokenUI();
+// Attempt to auto-fetch persist token on startup if not configured
+async function autoFetchPersistToken(){
+  try{
+    const existing = localStorage.getItem('persist_token');
+    if(existing) return; // already set
+    const hosts = [];
+    // allow an explicit host stored by the user (useful when app is served from GitHub Pages)
+    try{ const ph = localStorage.getItem('persist_host'); if(ph) hosts.push(ph); }catch(e){}
+    try{ const hn = (window && window.location && window.location.hostname) ? window.location.hostname : null; if(hn) hosts.push(hn); }catch(e){}
+    hosts.push('127.0.0.1','localhost');
+    // if the app is served from a remote host (e.g. github.io) and we have no saved host,
+    // prompt the user once for the PC's LAN IP so the app can reach the persist server.
+    try{
+      const pageHost = (window && window.location && window.location.hostname) ? window.location.hostname : '';
+      const isPrivate = /^127\.|^10\.|^192\.168\.|^172\.(1[6-9]|2\d|3[0-1])\./.test(pageHost);
+      const hasSavedHost = hosts.length && hosts[0] && hosts[0] !== pageHost && hosts[0] !== '127.0.0.1' && hosts[0] !== 'localhost';
+      if(!isPrivate && !hasSavedHost){
+        try{
+          const p = prompt('Enter the PC LAN IP running the persist server (e.g. 192.168.1.42) so the app can fetch the token automatically. Leave blank to skip.');
+          if(p && p.trim()){ localStorage.setItem('persist_host', p.trim()); hosts.unshift(p.trim()); }
+        }catch(e){}
+      }
+    }catch(e){}
+    for(const h of hosts){
+      try{
+        const url = `http://${h}:34000/fetch-token`;
+        const res = await fetch(url, { method: 'GET' });
+        if(!res) continue;
+        if(res.ok){
+          const j = await res.json();
+          if(j && j.ok && j.token){
+            try{ localStorage.setItem('persist_token', j.token); }catch(e){}
+            try{ const st = qs('#persist-status'); if(st) st.textContent = 'Token fetched and saved'; }catch(e){}
+            console.log('Persist token fetched from', h);
+            return;
+          }
+        }
+      }catch(e){ /* try next host */ }
+    }
+  }catch(e){ console.warn('autoFetchPersistToken failed', e); }
+}
+// fire-and-forget auto-fetch
+autoFetchPersistToken();
 // Register service worker for PWA/offline support
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{
-    navigator.serviceWorker.register('/service-worker.js').then(reg=>{
+    navigator.serviceWorker.register('./service-worker.js').then(reg=>{
       console.log('ServiceWorker registered', reg.scope);
     }).catch(err=>{
       console.warn('ServiceWorker failed to register', err);
