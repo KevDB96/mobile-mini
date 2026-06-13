@@ -97,19 +97,9 @@ header{display:flex;flex-direction:column;align-items:flex-start;margin-bottom:1
 #home .card{background:linear-gradient(90deg, rgba(211,43,138,0.16), rgba(255,143,207,0.10)); border:1px solid rgba(255,255,255,0.04); color:#fff; font-weight:700; letter-spacing:0.6px}
 .screen.active{display:block}
 .toolbar{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-
-/* Center the heading and text for the spiciness chooser while keeping the back button on the left */
-#tod-select .toolbar{justify-content:center;position:relative}
-#tod-select .toolbar .back{position:absolute;left:10px}
-#tod-select .toolbar h2{margin:0;text-align:center;width:100%}
-#tod-select .content, #tod-select .flame-grid{width:100%;text-align:center}
 .toolbar .back{background:none;border:none;color:var(--muted);font-size:1rem}
 .content{padding:8px 0}
-.card-content{background:linear-gradient(180deg, rgba(0,0,0,0.35), rgba(2,10,8,0.5));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);min-height:120px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;position:relative;overflow:hidden}
-.card-content > *{position:relative;z-index:1}
-
-/* Background overlay used for smooth crossfades when theme changes */
-.tod-bg-overlay{position:absolute;inset:0;border-radius:12px;pointer-events:none;z-index:0;opacity:0;transition:opacity 1.44s ease;background-size:cover;background-repeat:no-repeat}
+.card-content{background:linear-gradient(180deg, rgba(0,0,0,0.35), rgba(2,10,8,0.5));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);min-height:120px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px}
 
 /* TOD flame visuals: increasing red/orange intensity */
 .tod-mild .card-content{background:linear-gradient(180deg, rgba(40,10,20,0.35), rgba(80,20,40,0.25)); box-shadow:0 8px 30px rgba(150,40,80,0.06)}
@@ -130,11 +120,9 @@ header{display:flex;flex-direction:column;align-items:flex-start;margin-bottom:1
 #result .card-content{position:relative}
 #result-text{font-size:1.02rem;line-height:1.4;text-align:center;margin:6px 0;color:rgba(255,255,255,0.98)}
 
-/* Prompt number badge — top-left corner of prompt cards */
-.prompt-num{position:absolute;top:7px;left:9px;font-size:0.7rem;line-height:1;color:rgba(255,255,255,0.32);font-family:monospace;letter-spacing:0.04em;pointer-events:none;z-index:2;user-select:none}
-
-/* icon-only modifier for small circular controls */
-.icon-only{padding:0;width:34px;height:34px}
+/* Small delete button positioned at top-right of the prompt card */
+#result-delete{position:absolute;top:10px;right:10px;padding:6px 8px;border-radius:8px;background:rgba(255,80,80,0.12);color:#ffdede;border:none;font-size:0.85rem;min-width:unset;height:auto}
+#result-delete:hover{background:rgba(255,80,80,0.18)}
 
 /* Confirm / Fail button styles */
 #result-success{background:linear-gradient(90deg,#4de07a,#09b34a);color:#04210a;border:none;padding:10px 14px;border-radius:10px}
@@ -144,10 +132,10 @@ header{display:flex;flex-direction:column;align-items:flex-start;margin-bottom:1
 
 /* Settings dropdown and modal */
 /* legacy fallback removed; .settings is fixed at top-right */
-.dropdown{position:fixed;right:18px;top:54px;background:linear-gradient(180deg,rgba(20,10,20,0.97),rgba(10,4,12,0.97));border:1px solid rgba(255,255,255,0.08);padding:8px;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.6);z-index:200}
+.dropdown{position:absolute;right:18px;top:54px;background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(2,6,8,0.6));border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.6)}
 .dropdown-item{display:block;background:none;border:none;color:var(--muted);padding:8px 12px;border-radius:6px;width:100%;text-align:left}
 .dropdown-item:active{background:rgba(255,255,255,0.02)}
-.modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(0,0,0,0.45),rgba(0,0,0,0.6));z-index:210}
+.modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(0,0,0,0.45),rgba(0,0,0,0.6));z-index:40}
 .modal-content{background:linear-gradient(180deg,rgba(12,12,20,0.95),rgba(20,6,30,0.95));padding:18px;border-radius:12px;max-width:360px;width:90%;display:flex;flex-direction:column;gap:10px}
 .modal-content input{padding:8px;border-radius:8px;border:none;background:#071821;color:var(--muted)}
 .modal-content h3{margin:0;color:var(--mint)}
@@ -210,17 +198,16 @@ body.theme-zoetje .player-strip .player .token-icon.off{
 /* drink modal tweaks */
 #drink-modal .modal-content{background:linear-gradient(180deg,#20030a,#3b0f3a);color:#fff}
 
-.flame-grid{display:flex;flex-direction:column;gap:12px;padding:12px;align-items:center}
-.flame{display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;padding:10px;background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(0,0,0,0.06));border:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:transform .22s ease,box-shadow .22s ease;box-sizing:border-box;width:140px;min-height:64px}
+/* Spiciness selector */
+.flame-grid{display:flex;flex-direction:row;gap:12px;padding:12px}
+.flame{display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;padding:18px;background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(0,0,0,0.06));border:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:transform .22s ease,box-shadow .22s ease;flex:1;min-height:120px;box-sizing:border-box}
 .flame:hover{transform:translateY(-6px);box-shadow:0 12px 36px rgba(0,0,0,0.35)}
-.flame .flame-ico{font-size:22px}
-.flame .flame-label{font-weight:700;margin-top:6px;font-size:0.95rem}
+.flame .flame-ico{font-size:28px}
+.flame .flame-label{font-weight:700;margin-top:6px}
 .flame .flame-desc{font-size:12px;color:rgba(255,255,255,0.7)}
 .flame.mild{background:linear-gradient(180deg,#0b2b1f,#094b38)}
 .flame.regular{background:linear-gradient(180deg,#12303b,#1b5a58)}
 .flame.spicy{background:linear-gradient(180deg,#5a0010,#b0003a)}
-.flame.heat-toggle{background:linear-gradient(180deg,#1a0a00,#3a1200);border:1px solid rgba(255,80,0,0.18);color:rgba(255,200,150,0.7);opacity:0.7;transition:opacity .2s,box-shadow .2s,background .2s}
-.flame.heat-toggle.active{background:linear-gradient(180deg,#3a0800,#8b1a00);border-color:rgba(255,80,0,0.55);color:#ffb07a;opacity:1;box-shadow:0 0 22px rgba(255,60,0,0.35)}
 
 .upgrade-toast{position:fixed;left:50%;top:12%;transform:translateX(-50%);padding:12px 18px;border-radius:8px;background:linear-gradient(90deg,#ffb199,#ff5a7a);color:#200;box-shadow:0 10px 40px rgba(0,0,0,0.35);font-weight:700;z-index:1000;opacity:0;transition:opacity .28s ease,transform .28s ease}
 .upgrade-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -264,11 +251,8 @@ body.theme-zoetje .player-strip .player .token-icon.off{
 	.flame-grid{grid-template-columns:repeat(2,1fr);gap:12px}
 	/* keep vertical listing on narrow screens */
 	.flame-grid{flex-direction:column}
-	.flame{width:100%;padding:14px;border-radius:12px;min-height:72px}
+	.flame{padding:14px;border-radius:12px}
 }
-
-/* Keep flames stacked vertically and equal-sized by default */
-.flame{height:120px}
 
 /* Safe-area support for mobile bottom bars */
 .tod-footer{padding-bottom:env(safe-area-inset-bottom,8px)}

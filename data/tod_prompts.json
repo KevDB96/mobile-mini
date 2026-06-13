@@ -241,23 +241,23 @@
                                  },
                                  {
                                      "id":  58,
-                                     "text":  "{{current_nickname}}, tell {{other_nickname}} something specific you noticed about them in the first few weeks that you never mentioned."
+                                     "text":  "{{current_nickname}}, kiss {{other_nickname}} slowly on the lips for 10 seconds — hands on their face only."
                                  },
                                  {
                                      "id":  59,
-                                     "text":  "{{current_nickname}}, tell {{other_nickname}} the thing you\u0027d be most afraid to lose about them."
+                                     "text":  "{{current_nickname}}, give {{other_nickname}} a neck and shoulder massage for 45 seconds."
                                  },
                                  {
                                      "id":  60,
-                                     "text":  "{{current_nickname}}, look at {{other_nickname}} and say one thing you think they need to believe about themselves."
+                                     "text":  "{{current_nickname}}, hold {{other_nickname}}\u0027s hand and trace slow patterns on their palm for 30 seconds, eyes closed."
                                  },
                                  {
                                      "id":  61,
-                                     "text":  "{{current_nickname}}, tell {{other_nickname}} about a moment with them that you secretly replayed afterward."
+                                     "text":  "{{current_nickname}}, kiss {{other_nickname}} on the neck — once, as slowly as you can."
                                  },
                                  {
                                      "id":  62,
-                                     "text":  "{{current_nickname}}, tell {{other_nickname}} the thing you were thinking the first time you realised you actually liked them."
+                                     "text":  "{{current_nickname}}, pull {{other_nickname}} into a hug from behind and hold them for 30 seconds."
                                  },
                                  {
                                      "id":  121,
@@ -285,7 +285,7 @@
                                  },
                                  {
                                      "id":  127,
-                                     "text":  "{{current_nickname}}, lean in close to {{other_nickname}}\u0027s ear and tell them something you\u0027ve been meaning to say."
+                                     "text":  "{{current_nickname}}, give {{other_nickname}} a back massage for 45 seconds — they choose where."
                                  },
                                  {
                                      "id":  128,
@@ -297,7 +297,7 @@
                                  },
                                  {
                                      "id":  130,
-                                     "text":  "{{current_nickname}}, whisper to {{other_nickname}} your favourite memory of the two of you."
+                                     "text":  "{{current_nickname}}, kiss {{other_nickname}} on the forehead, then the cheek, then the lips — take your time with each."
                                  },
                                  {
                                      "id":  131,
@@ -305,7 +305,7 @@
                                  },
                                  {
                                      "id":  132,
-                                     "text":  "{{current_nickname}}, cup {{other_nickname}}\u0027s face, look them in the eyes, and say \u0027I see you\u0027 — then explain what you mean."
+                                     "text":  "{{current_nickname}}, sit in {{other_nickname}}\u0027s lap, hold eye contact for 20 seconds, then kiss them."
                                  },
                                  {
                                      "id":  133,
@@ -329,7 +329,7 @@
                                  },
                                  {
                                      "id":  138,
-                                     "text":  "{{current_nickname}}, look at {{other_nickname}} like you\u0027re trying to memorise them — for 20 full seconds — then tell them what you were thinking."
+                                     "text":  "{{current_nickname}}, hold {{other_nickname}}\u0027s face in your hands and kiss them until one of you pulls back."
                                  },
                                  {
                                      "id":  139,
@@ -520,7 +520,7 @@
                                },
                                {
                                    "id":  107,
-                                   "text":  "{{current_nickname}}, whisper exactly what you want to do to {{other_nickname}} — nothing omitted."
+                                   "text":  "{{current_nickname}}, use your mouth on {{other_nickname}}\u0027s inner thigh — both sides, take your time."
                                },
                                {
                                    "id":  108,
@@ -528,51 +528,51 @@
                                },
                                {
                                    "id":  109,
-                                   "text":  "{{current_nickname}}, tell {{other_nickname}} the one thing you\u0027ve been afraid to need from them."
+                                   "text":  "{{current_nickname}}, use your mouth on {{other_nickname}}\u0027s neck, chest, or wherever they want — for a full minute, no stopping."
                                },
                                {
                                    "id":  110,
-                                   "text":  "{{current_nickname}}, look {{other_nickname}} in the eyes and say the thing you\u0027ve been meaning to say but kept finding reasons not to."
+                                   "text":  "{{current_nickname}}, get on your knees in front of {{other_nickname}}, look up at them, and stay there for 15 seconds."
                                },
                                {
                                    "id":  111,
-                                   "text":  "{{current_nickname}}, whisper to {{other_nickname}} what you were most afraid of before this got serious."
+                                   "text":  "{{current_nickname}}, take off {{other_nickname}}\u0027s underwear — slowly, using only your hands."
                                },
                                {
                                    "id":  112,
-                                   "text":  "{{current_nickname}}, tell {{other_nickname}} exactly what you felt the moment you knew you were falling for them."
+                                   "text":  "{{current_nickname}}, grind against {{other_nickname}} for 30 seconds — no clothes coming off, just contact."
                                },
                                {
                                    "id":  113,
-                                   "text":  "{{current_nickname}}, share the most honest thing you\u0027ve thought about {{other_nickname}} that you\u0027ve kept to yourself."
+                                   "text":  "{{current_nickname}}, remove {{other_nickname}}\u0027s top or shirt while they stand completely still."
                                },
                                {
                                    "id":  114,
-                                   "text":  "{{current_nickname}}, tell {{other_nickname}} about a moment you were quietly proud of them but didn\u0027t say so."
+                                   "text":  "{{current_nickname}}, use your hands on {{other_nickname}} — anywhere below the waist — for 20 seconds."
                                },
                                {
                                    "id":  115,
-                                   "text":  "{{current_nickname}}, take {{other_nickname}}\u0027s face in your hands and say the thing you hope they already know but might not."
+                                   "text":  "{{current_nickname}}, let {{other_nickname}} do whatever they want to your neck and chest for 45 seconds — you can\u0027t stop them."
                                },
                                {
                                    "id":  116,
-                                   "text":  "{{current_nickname}}, kiss {{other_nickname}} the way you would if you needed to feel safe."
+                                   "text":  "{{current_nickname}}, bite {{other_nickname}} somewhere they\u0027ll feel it tomorrow."
                                },
                                {
                                    "id":  117,
-                                   "text":  "{{current_nickname}}, whisper to {{other_nickname}} what you want more of — physically or emotionally — that you\u0027ve held back from asking for."
+                                   "text":  "{{current_nickname}}, grind against {{other_nickname}} until one of you needs to stop."
                                },
                                {
                                    "id":  118,
-                                   "text":  "{{current_nickname}}, press your forehead to {{other_nickname}}\u0027s and stay there in silence for 30 seconds."
+                                   "text":  "{{current_nickname}}, take off one item of your own clothing — slowly, making eye contact the whole time."
                                },
                                {
                                    "id":  119,
-                                   "text":  "{{current_nickname}}, tell {{other_nickname}} one thing about yourself you\u0027ve never told anyone — right now, out loud."
+                                   "text":  "{{current_nickname}}, kiss {{other_nickname}} wherever they ask — once, slowly, wherever they point."
                                },
                                {
                                    "id":  120,
-                                   "text":  "{{current_nickname}}, hold {{other_nickname}}\u0027s hands, look at them, and tell them the thing you\u0027d want them to remember about you."
+                                   "text":  "{{current_nickname}}, put {{other_nickname}}\u0027s hand exactly where you want it and tell them what to do."
                                },
                                {
                                    "id":  140,
@@ -584,7 +584,7 @@
                                },
                                {
                                    "id":  142,
-                                   "text":  "{{current_nickname}}, describe in detail exactly what you want {{other_nickname}} to do to you tonight."
+                                   "text":  "{{current_nickname}}, put your hands under {{other_nickname}}\u0027s clothes and keep them there for 20 seconds."
                                },
                                {
                                    "id":  143,
@@ -600,7 +600,7 @@
                                },
                                {
                                    "id":  146,
-                                   "text":  "{{current_nickname}}, whisper the most explicit thing you\u0027ve thought about doing to {{other_nickname}} — in full detail."
+                                   "text":  "{{current_nickname}}, trail your mouth from {{other_nickname}}\u0027s ear all the way down to their waist — no stopping."
                                },
                                {
                                    "id":  147,
@@ -612,7 +612,7 @@
                                },
                                {
                                    "id":  149,
-                                   "text":  "{{current_nickname}}, tell {{other_nickname}} exactly where and how you want to be touched right now."
+                                   "text":  "{{current_nickname}}, use only your mouth on {{other_nickname}} for 45 seconds — anywhere they ask."
                                },
                                {
                                    "id":  150,
@@ -632,7 +632,7 @@
                                },
                                {
                                    "id":  154,
-                                   "text":  "{{current_nickname}}, tell {{other_nickname}} the most turned-on you\u0027ve ever been because of something they did — in detail."
+                                   "text":  "{{current_nickname}}, get your hands inside {{other_nickname}}\u0027s waistband for 20 seconds."
                                },
                                {
                                    "id":  155,
@@ -640,7 +640,7 @@
                                },
                                {
                                    "id":  156,
-                                   "text":  "{{current_nickname}}, whisper to {{other_nickname}} what you want them to do to you the moment this game is over."
+                                   "text":  "{{current_nickname}}, let {{other_nickname}} undress you — they choose what comes off."
                                },
                                {
                                    "id":  157,
@@ -656,7 +656,7 @@
                                },
                                {
                                    "id":  160,
-                                   "text":  "{{current_nickname}}, describe the last time you were alone with {{other_nickname}} and what you were thinking about doing."
+                                   "text":  "{{current_nickname}}, make {{other_nickname}} make a noise — using only your hands."
                                },
                                {
                                    "id":  161,
@@ -668,12 +668,79 @@
                                },
                                {
                                    "id":  163,
-                                   "text":  "{{current_nickname}}, tell {{other_nickname}} the single most intimate thing you want to experience with them that you haven\u0027t yet."
+                                   "text":  "{{current_nickname}}, use your mouth on {{other_nickname}} below the waist."
                                },
                                {
                                    "id":  164,
                                    "text":  "{{current_nickname}}, make {{other_nickname}} feel wanted — however you know best — for the next 30 seconds."
                                }
-                           ]
+                           ],
+                  "heat":  {
+                               "dare":  [
+                                            {
+                                                "id":  200,
+                                                "text":  "{{current_nickname}}, go down on {{other_nickname}} for two full minutes — no stopping, no skipping."
+                                            },
+                                            {
+                                                "id":  201,
+                                                "text":  "{{current_nickname}}, let {{other_nickname}} do whatever they want to you — you say nothing and don\u0027t stop them."
+                                            },
+                                            {
+                                                "id":  202,
+                                                "text":  "{{current_nickname}}, make {{other_nickname}} finish using only your mouth."
+                                            },
+                                            {
+                                                "id":  203,
+                                                "text":  "{{current_nickname}}, take off everything and let {{other_nickname}} look at you for 30 seconds without touching."
+                                            },
+                                            {
+                                                "id":  204,
+                                                "text":  "{{current_nickname}}, touch yourself in front of {{other_nickname}} until they tell you to stop."
+                                            },
+                                            {
+                                                "id":  205,
+                                                "text":  "{{current_nickname}}, pin {{other_nickname}} down and do whatever you want to them for 60 seconds."
+                                            },
+                                            {
+                                                "id":  206,
+                                                "text":  "{{current_nickname}}, let {{other_nickname}} restrain your hands and do what they want."
+                                            },
+                                            {
+                                                "id":  207,
+                                                "text":  "{{current_nickname}}, ride {{other_nickname}} — however you like — for 60 seconds."
+                                            },
+                                            {
+                                                "id":  208,
+                                                "text":  "{{current_nickname}}, use your mouth on {{other_nickname}} until they have to pull you away."
+                                            },
+                                            {
+                                                "id":  209,
+                                                "text":  "{{current_nickname}}, take off {{other_nickname}}\u0027s underwear with your teeth."
+                                            },
+                                            {
+                                                "id":  210,
+                                                "text":  "{{current_nickname}}, let {{other_nickname}} edge you — they decide when you get relief."
+                                            },
+                                            {
+                                                "id":  211,
+                                                "text":  "{{current_nickname}}, get on all fours and let {{other_nickname}} do whatever they want from behind."
+                                            },
+                                            {
+                                                "id":  212,
+                                                "text":  "{{current_nickname}}, tell {{other_nickname}} to use their mouth on you — and keep your hands in their hair."
+                                            },
+                                            {
+                                                "id":  213,
+                                                "text":  "{{current_nickname}}, make {{other_nickname}} beg before you give them what they want."
+                                            },
+                                            {
+                                                "id":  214,
+                                                "text":  "{{current_nickname}}, let {{other_nickname}} blindfold you and do whatever they choose for two minutes."
+                                            }
+                                        ],
+                               "truth":  [
+
+                                         ]
+                           }
               }
 }

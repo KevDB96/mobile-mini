@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="theme-color" content="#3b0f3a" />
   <!-- PWA / Mobile meta -->
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="/manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Mini Games">
@@ -54,11 +54,6 @@
           <button class="tod-choice flame spicy" data-level="spicy">
             <div class="flame-ico">🌶️🌶️🌶️</div>
             <div class="flame-label">Spicy</div>
-          </button>
-          <button id="heat-toggle" class="flame heat-toggle" aria-pressed="false">
-            <div class="flame-ico">🔞</div>
-            <div class="flame-label">Turn up the heat</div>
-            <div class="flame-desc">Explicit mode — off</div>
           </button>
         </div>
         <div id="tod-upgrade" class="upgrade-toast hidden">Level up! Moving to <span id="tod-upgrade-level"></span></div>
@@ -134,10 +129,10 @@
             <span id="result-timer-display">00:00</span>
             <button id="result-timer-start">Start Timer</button>
           </div>
-          <span id="result-prompt-num" class="prompt-num"></span>
           <div class="controls">
             <button id="result-success" class="hidden">Succeeded</button>
             <button id="result-fail" class="hidden">Failed</button>
+            <button id="result-delete" class="danger">Delete</button>
           </div>
         </div>
       </div>
@@ -155,16 +150,6 @@
         </div>
       </div>
     </div>
-
-  <div id="strip-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3 id="strip-title">🔥 Strip!</h3>
-      <p id="strip-text">Pick an article of clothing to remove.</p>
-      <div class="controls">
-        <button id="strip-ok">OK</button>
-      </div>
-    </div>
-  </div>
 
   <div id="drink-modal" class="modal hidden">
     <div class="modal-content">
@@ -188,7 +173,6 @@
           <button id="tod-dare">Dare</button>
         </div>
         <div id="tod-area" class="card-content">
-          <span id="tod-prompt-num" class="prompt-num"></span>
           <p id="tod-text">Choose Truth or Dare to begin.</p>
           <div id="tod-timer-area" class="timer hidden">
             <span id="tod-timer-display">00:00</span>

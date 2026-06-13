@@ -1,0 +1,10 @@
+{
+  "allowedSSID": "Telenet8193689",
+  "allowedGatewayMac": "8c:9a:8f:98:1a:98",
+  "allowedSubnets": [ "192.168.1.0/24" ],
+  "requireLocalOnly": true,
+  "repoPath": "c:\\Users\\kevin\\mobile-mini",
+  "token": "replace-with-secret-token",
+  "branch": "main",
+  "port": 34000
+}

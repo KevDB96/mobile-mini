@@ -107,15 +107,16 @@ let q36 = []; // expected: [{title:'Set 1', questions:[...]}, ...]
 let q36Set = 0;
 let q36Index = 0;
 
-let todPrompts = {mild:{truth:[],dare:[]},regular:{truth:[],dare:[]},spicy:{truth:[],dare:[]}};
+let todPrompts = {mild:{truth:[],dare:[]},regular:{truth:[],dare:[]},spicy:{truth:[],dare:[],heat:{dare:[],truth:[]}}};
+let heatMode = false;
 // Track used prompts per-level (legacy) and a global session-level set to avoid repeats
-let usedTod = {mild:{truth:new Set(),dare:new Set()},regular:{truth:new Set(),dare:new Set()},spicy:{truth:new Set(),dare:new Set()}};
+let usedTod = {mild:{truth:new Set(),dare:new Set()},regular:{truth:new Set(),dare:new Set()},spicy:{truth:new Set(),dare:new Set(),heat_dare:new Set()}};
 let usedTodSession = new Set(); // stores prompt text used during the current session
 
 function resetTodSession(){
   // Clear the per-level used indexes and the session-level used prompt strings
   try{
-    ['mild','regular','spicy'].forEach(l=>{ if(usedTod[l]){ usedTod[l].truth = new Set(); usedTod[l].dare = new Set(); } });
+    ['mild','regular','spicy'].forEach(l=>{ if(usedTod[l]){ usedTod[l].truth = new Set(); usedTod[l].dare = new Set(); } }); usedTod.spicy.heat_dare = new Set();
     usedTodSession.clear();
   }catch(e){ console.warn('Failed to reset TOD session state', e); }
 }
@@ -202,6 +203,15 @@ async function loadTod(){
         }).filter(Boolean);
       });
     });
+    // Normalize heat prompts under spicy.heat
+    try{
+      const h = (todPrompts.spicy && todPrompts.spicy.heat) || {};
+      todPrompts.spicy.heat = todPrompts.spicy.heat || {};
+      ['dare','truth'].forEach(t=>{
+        const arr = (h && h[t]) || [];
+        todPrompts.spicy.heat[t] = arr.map(item=>{ if(!item) return null; if(typeof item==='string') return {text:item}; return item; }).filter(Boolean);
+      });
+    }catch(e){}
   }
   catch(e){ console.warn('Failed to load tod_prompts.json — ensure the app is served over HTTP and that data/tod_prompts.json exists.'); todPrompts = {mild:{truth:[],dare:[]},regular:{truth:[],dare:[]},spicy:{truth:[],dare:[]}}; }
 }
@@ -283,8 +293,8 @@ function setupTimerForResult(text){
     // ensure the start button is visible and enabled for this result
     if(startBtn){ startBtn.classList.remove('hidden'); startBtn.disabled = false; }
     if(succ) succ.disabled = true;
-    if(fail) fail.disabled = true;
-    startBtn.onclick = ()=> startCountdown(seconds, display, ()=>{ if(succ) succ.disabled = false; if(fail) fail.disabled = false; }, startBtn, nextBtn);
+    if(fail) fail.disabled = false;
+    startBtn.onclick = ()=> startCountdown(seconds, display, ()=>{ if(succ) succ.disabled = false; }, startBtn, nextBtn);
   } else {
     area.classList.add('hidden');
     if(nextBtn) nextBtn.disabled = false;
@@ -415,7 +425,12 @@ function setupTimerForTod(text){ clearTimer(); const seconds = parseSecondsFromT
 
 function pickTodPrompt(level, type){
   const levels = ['mild','regular','spicy'];
-  const list = (todPrompts[level] && todPrompts[level][type]) || [];
+  // When heat mode is on and we're in spicy, merge heat dares into the pool
+  let list = (todPrompts[level] && todPrompts[level][type]) || [];
+  if(heatMode && level === 'spicy' && type === 'dare'){
+    const heatList = (todPrompts.spicy && todPrompts.spicy.heat && todPrompts.spicy.heat.dare) || [];
+    list = list.concat(heatList);
+  }
   if(!list.length) return null;
   // prefer prompts not used in this session
   let available = list.map((v,i)=>i).filter(i=>!usedTodSession.has(list[i] && list[i].text));
@@ -813,12 +828,25 @@ on('#turn-dare','click',()=>{
 on('#result-next','click',()=>{ setTimeout(()=> show('spinner'), 800); });
 // hide confirm/fail buttons when navigating away from result
 on('#result-next','click', ()=>{ const succ = qs('#result-success'); const fail = qs('#result-fail'); if(succ) succ.classList.add('hidden'); if(fail) fail.classList.add('hidden'); });
+on('#strip-ok','click',()=>{ qs('#strip-modal').classList.add('hidden'); setTimeout(()=> show('spinner'), 800); });
 on('#result-success','click',()=>{
   // hide confirm/fail immediately
   try{ const s = qs('#result-success'); const f = qs('#result-fail'); if(s) s.classList.add('hidden'); if(f) f.classList.add('hidden'); }catch(e){}
   const playerName = qs('#result-player').textContent;
   const idx = players.indexOf(playerName);
   if(idx<0) return;
+  // 10% chance of strip event on spicy level
+  try{
+    const level = qs('#tod-level') ? qs('#tod-level').value : '';
+    if(level === 'spicy' && Math.random() < 0.10){
+      const other = players.find(p=>p!==playerName) || players[0];
+      const target = (Math.random() < 0.5) ? playerName : other;
+      qs('#strip-title').textContent = '🔥 Strip!';
+      qs('#strip-text').textContent = `${target} removes one article of clothing of their choice.`;
+      qs('#strip-modal').classList.remove('hidden');
+      return;
+    }
+  }catch(e){}
   const reached = incToken(idx);
   if(reached){ // other player drinks
     const other = (idx===0?1:0);
@@ -904,6 +932,19 @@ document.addEventListener('click', (e)=>{
 });
 
 function showUpgradeToast(level){ try{ const t = qs('#tod-upgrade'); const l = qs('#tod-upgrade-level'); if(!t) return; if(l) l.textContent = level; t.classList.remove('hidden'); t.classList.add('show'); setTimeout(()=>{ t.classList.remove('show'); t.classList.add('hidden'); }, 2200); }catch(e){} }
+
+// Heat toggle
+on('#heat-toggle','click',()=>{
+  heatMode = !heatMode;
+  const btn = qs('#heat-toggle');
+  if(!btn) return;
+  btn.setAttribute('aria-pressed', heatMode ? 'true' : 'false');
+  btn.classList.toggle('active', heatMode);
+  const desc = btn.querySelector('.flame-desc');
+  if(desc) desc.textContent = heatMode ? 'Explicit mode — on' : 'Explicit mode — off';
+  const ico = btn.querySelector('.flame-ico');
+  if(ico) ico.textContent = heatMode ? '🔞🔥' : '🔞';
+});
 
 
 
