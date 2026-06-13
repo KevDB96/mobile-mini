@@ -46,5 +46,3 @@ Notes:
 - The app includes `manifest.json` and registers `service-worker.js` for basic offline caching.
 - Add icons under `/icons/` (192x192, 512x512 PNG) for a proper install icon.
 - On iOS, use the Safari share sheet → "Add to Home Screen" to install; Apple uses meta tags already added to `index.html`.
-
-If you want, I can add icons and tweak the service worker caching strategy.
