@@ -849,7 +849,7 @@ on('#turn-truth','click',()=>{
   const prompt = finalizePrompt(promptRaw, player, other, true);
   qs('#result-player').textContent = player;
   qs('#result-text').textContent = prompt;
-  try{ const n = qs('#result-prompt-num'); if(n) n.textContent = nextPromptNum(); }catch(e){}
+  try{ const n = qs('#result-prompt-num'); if(n) n.textContent = pick && pick.promptObj && pick.promptObj.id ? '#'+pick.promptObj.id : ''; }catch(e){}
   // reveal confirm/fail buttons
   const succ = qs('#result-success'); const fail = qs('#result-fail'); if(succ) succ.classList.remove('hidden'); if(fail) fail.classList.remove('hidden');
   // set button labels for truth
@@ -867,7 +867,7 @@ on('#turn-dare','click',()=>{
   const prompt = finalizePrompt(promptRaw, player, other, true);
   qs('#result-player').textContent = player;
   qs('#result-text').textContent = prompt;
-  try{ const n = qs('#result-prompt-num'); if(n) n.textContent = nextPromptNum(); }catch(e){}
+  try{ const n = qs('#result-prompt-num'); if(n) n.textContent = pick && pick.promptObj && pick.promptObj.id ? '#'+pick.promptObj.id : ''; }catch(e){}
   const succ = qs('#result-success'); const fail = qs('#result-fail'); if(succ) succ.classList.remove('hidden'); if(fail) fail.classList.remove('hidden');
   // set button labels for dare
   if(succ) succ.textContent = 'Did it!';
@@ -923,7 +923,7 @@ on('#tod-truth','click',()=>{
   const other = players[1] || 'Player 2';
   const p = finalizePrompt(pRaw, actor, other, true) || pRaw || 'No prompts';
   qs('#tod-text').textContent = p;
-  try{ const n = qs('#tod-prompt-num'); if(n) n.textContent = nextPromptNum(); }catch(e){}
+  try{ const n = qs('#tod-prompt-num'); if(n) n.textContent = pick && pick.promptObj && pick.promptObj.id ? '#'+pick.promptObj.id : ''; }catch(e){}
   setupTimerForTod(p);
 });
 on('#tod-dare','click',()=>{
@@ -934,7 +934,7 @@ on('#tod-dare','click',()=>{
   const other = players[1] || 'Player 2';
   const p = finalizePrompt(pRaw, actor, other, true) || pRaw || 'No prompts';
   qs('#tod-text').textContent = p;
-  try{ const n = qs('#tod-prompt-num'); if(n) n.textContent = nextPromptNum(); }catch(e){}
+  try{ const n = qs('#tod-prompt-num'); if(n) n.textContent = pick && pick.promptObj && pick.promptObj.id ? '#'+pick.promptObj.id : ''; }catch(e){}
   setupTimerForTod(p);
 });
 on('#tod-next','click',()=>{
@@ -946,7 +946,7 @@ on('#tod-next','click',()=>{
   const other = players[1] || 'Player 2';
   const p = finalizePrompt(pRaw,actor,other,true) || pRaw || 'No prompts';
   qs('#tod-text').textContent = p;
-  try{ const n = qs('#tod-prompt-num'); if(n) n.textContent = nextPromptNum(); }catch(e){}
+  try{ const n = qs('#tod-prompt-num'); if(n) n.textContent = pick && pick.promptObj && pick.promptObj.id ? '#'+pick.promptObj.id : ''; }catch(e){}
   setupTimerForTod(p);
 });
 on('#tod-copy','click',()=>{ const txt = qs('#tod-text').textContent; if(!txt) return; navigator.clipboard.writeText(txt).then(()=>alert('Copied!')).catch(()=>{}); });
