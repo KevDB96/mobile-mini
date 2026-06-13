@@ -1,339 +1,679 @@
-{
-  "mild": {
-    "label": "🟢 Mild",
-    "truth": [
-      {
-        "id": 1,
-        "text": "{{current_nickname}}, what's a childhood memory that still makes you smile when you think about it?"
-      },
-      {
-        "id": 2,
-        "text": "{{current_nickname}}, what did your parents' relationship teach you, good or bad, about love?"
-      },
-      {
-        "id": 3,
-        "text": "{{current_nickname}}, what's something you were really proud of before you met {{other_nickname}} that you don't think they know about?"
-      },
-      {
-        "id": 4,
-        "text": "{{current_nickname}}, what's a value or belief you got from your upbringing that you've kept as an adult?"
-      },
-      {
-        "id": 5,
-        "text": "{{current_nickname}}, what did you imagine your life would look like at this age when you were a kid?"
-      },
-      {
-        "id": 6,
-        "text": "{{current_nickname}}, who was your biggest role model growing up, and why?"
-      },
-      {
-        "id": 7,
-        "text": "{{current_nickname}}, what's something you believe about the world that most people around you don't seem to share?"
-      },
-      {
-        "id": 8,
-        "text": "{{current_nickname}}, what's a small, everyday thing that makes you feel genuinely loved?"
-      },
-      {
-        "id": 9,
-        "text": "{{current_nickname}}, what's a place you've been to that genuinely changed how you see the world?"
-      },
-      {
-        "id": 10,
-        "text": "{{current_nickname}}, what's the most important lesson a failure ever taught you?"
-      },
-      {
-        "id": 11,
-        "text": "{{current_nickname}}, what's something you do differently from how you were raised, intentionally?"
-      },
-      {
-        "id": 12,
-        "text": "{{current_nickname}}, what's a compliment you received that you still think about?"
-      },
-      {
-        "id": 13,
-        "text": "{{current_nickname}}, what's something you're quietly proud of that you'd never bring up yourself?"
-      },
-      {
-        "id": 14,
-        "text": "{{current_nickname}}, what kind of old person do you want to be?"
-      },
-      {
-        "id": 15,
-        "text": "{{current_nickname}}, what's a book, film, or song that genuinely shaped who you are?"
-      },
-      {
-        "id": 16,
-        "text": "{{current_nickname}}, what's something you used to be embarrassed about that you've made peace with?"
-      },
-      {
-        "id": 17,
-        "text": "{{current_nickname}}, what does a perfect ordinary day look like to you?"
-      }
-    ],
-    "dare": [
-      {
-        "id": 18,
-        "text": "{{current_nickname}}, tell {{other_nickname}} one thing you've never said out loud that you admire about {{other_nickname}}."
-      },
-      {
-        "id": 19,
-        "text": "{{current_nickname}}, describe {{other_nickname}} using only food metaphors for 15 seconds."
-      },
-      {
-        "id": 20,
-        "text": "{{current_nickname}}, tell {{other_nickname}} what you were thinking about during your first kiss."
-      }
-    ]
-  },
-  "regular": {
-    "label": "🟡 Regular",
-    "truth": [
-      {
-        "id": 21,
-        "text": "{{current_nickname}}, what's the biggest mistake you've made in a past relationship, and what did it teach you?"
-      },
-      {
-        "id": 22,
-        "text": "{{current_nickname}}, what's something about your personality you actively work on improving?"
-      },
-      {
-        "id": 23,
-        "text": "{{current_nickname}}, what does emotional safety mean to you, and have you ever truly felt it with someone?"
-      },
-      {
-        "id": 24,
-        "text": "{{current_nickname}}, is there a version of yourself you've left behind that you sometimes grieve?"
-      },
-      {
-        "id": 25,
-        "text": "{{current_nickname}}, what's your biggest fear when it comes to long-term commitment?"
-      },
-      {
-        "id": 26,
-        "text": "{{current_nickname}}, what's something you've never told your family about yourself?"
-      },
-      {
-        "id": 27,
-        "text": "{{current_nickname}}, have you ever stayed in a situation — friendship, job, relationship — way longer than you should have? Why?"
-      },
-      {
-        "id": 28,
-        "text": "{{current_nickname}}, what's your relationship with your own ambition — does it drive you, scare you, or both?"
-      },
-      {
-        "id": 29,
-        "text": "{{current_nickname}}, what's a belief about yourself that you're not sure is even true anymore?"
-      },
-      {
-        "id": 30,
-        "text": "{{current_nickname}}, what's a period of your life you don't talk about much — and why?"
-      },
-      {
-        "id": 31,
-        "text": "{{current_nickname}}, is there a friendship you lost that you still think about?"
-      },
-      {
-        "id": 32,
-        "text": "{{current_nickname}}, what does 'home' mean to you — is it a place, a feeling, a person?"
-      },
-      {
-        "id": 33,
-        "text": "{{current_nickname}}, what's something you've sacrificed for someone else that you've never fully made peace with?"
-      },
-      {
-        "id": 34,
-        "text": "{{current_nickname}}, what's something you find genuinely hard to forgive in people?"
-      },
-      {
-        "id": 35,
-        "text": "{{current_nickname}}, what's the most afraid you've ever been, and how did you handle it?"
-      },
-      {
-        "id": 36,
-        "text": "{{current_nickname}}, is there a version of your life you almost lived that you think about sometimes?"
-      },
-      {
-        "id": 37,
-        "text": "{{current_nickname}}, what's something you need when you're at your lowest that you struggle to ask for?"
-      },
-      {
-        "id": 38,
-        "text": "{{current_nickname}}, what's a boundary you have that you've let people cross more than once?"
-      },
-      {
-        "id": 39,
-        "text": "{{current_nickname}}, what's the harshest thing someone has said to you that stuck?"
-      },
-      {
-        "id": 40,
-        "text": "{{current_nickname}}, when do you feel most like yourself?"
-      },
-      {
-        "id": 41,
-        "text": "{{current_nickname}}, what's something about your past you've reframed over time — something that hurt then but you've found meaning in since?"
-      },
-      {
-        "id": 42,
-        "text": "{{current_nickname}}, is there something you've outgrown that used to define you?"
-      },
-      {
-        "id": 43,
-        "text": "{{current_nickname}}, what's a lie you used to tell yourself that you no longer believe?"
-      },
-      {
-        "id": 44,
-        "text": "{{current_nickname}}, what's the most generous thing anyone has ever done for you?"
-      },
-      {
-        "id": 45,
-        "text": "{{current_nickname}}, what part of growing up was hardest for you that you rarely talk about?"
-      }
-    ],
-    "dare": [
-      {
-        "id": 46,
-        "text": "{{current_nickname}}, hold {{other_nickname}}'s face in your hands and maintain eye contact for 15 seconds without laughing."
-      },
-      {
-        "id": 47,
-        "text": "{{current_nickname}}, give {{other_nickname}} a forehead kiss and whisper something they need to hear."
-      },
-      {
-        "id": 48,
-        "text": "{{current_nickname}}, trace a letter on {{other_nickname}}'s back with your finger — they have to guess what you wrote."
-      },
-      {
-        "id": 49,
-        "text": "{{current_nickname}}, slow dance with {{other_nickname}} for one full song, no talking."
-      },
-      {
-        "id": 50,
-        "text": "{{current_nickname}}, give {{other_nickname}} a hand massage for 15 seconds."
-      }
-    ]
-  },
-  "spicy": {
-    "label": "🔴 Spicy",
-    "truth": [
-      {
-        "id": 51,
-        "text": "{{current_nickname}}, what's something that happened in your past that you think still quietly affects you today?"
-      },
-      {
-        "id": 52,
-        "text": "{{current_nickname}}, have you ever been truly heartbroken? What did it change about you?"
-      },
-      {
-        "id": 53,
-        "text": "{{current_nickname}}, what's a dealbreaker you have that you'd feel uncomfortable admitting out loud?"
-      },
-      {
-        "id": 54,
-        "text": "{{current_nickname}}, is there anything about your past, a choice, a period of life, a version of you, that you feel ashamed of?"
-      },
-      {
-        "id": 55,
-        "text": "{{current_nickname}}, what's something you want from life that you're afraid to tell {{other_nickname}} in case they don't want the same thing?"
-      },
-      {
-        "id": 56,
-        "text": "{{current_nickname}}, have you ever fallen out of love with someone? What did that feel like?"
-      },
-      {
-        "id": 57,
-        "text": "{{current_nickname}}, what's a part of yourself you've hidden in past relationships to avoid conflict or rejection?"
-      },
-      {
-        "id": 58,
-        "text": "{{current_nickname}}, is there something you've always wanted to ask {{other_nickname}} but held back from?"
-      },
-      {
-        "id": 59,
-        "text": "{{current_nickname}}, what's the most vulnerable you've ever let yourself be with another person, and how did it go?"
-      },
-      {
-        "id": 60,
-        "text": "{{current_nickname}}, what does your gut tell you about you and {{other_nickname}} — honestly, right now?"
-      },
-      {
-        "id": 61,
-        "text": "{{current_nickname}}, if you knew {{other_nickname}} wouldn't judge you, what's something you'd tell them that you haven't yet?"
-      },
-      {
-        "id": 62,
-        "text": "{{current_nickname}}, what's the biggest way you've changed as a person in the last five years — and are you happy about it?"
-      },
-      {
-        "id": 63,
-        "text": "{{current_nickname}}, have you ever loved someone you knew wasn't right for you? What kept you there?"
-      },
-      {
-        "id": 64,
-        "text": "{{current_nickname}}, what's something you want your relationship with {{other_nickname}} to give you that your life is currently missing?"
-      },
-      {
-        "id": 65,
-        "text": "{{current_nickname}}, what's something you've done that you'd struggle to defend, even now?"
-      },
-      {
-        "id": 66,
-        "text": "{{current_nickname}}, have you ever pushed someone away who genuinely cared about you? Why?"
-      },
-      {
-        "id": 67,
-        "text": "{{current_nickname}}, what's the closest you've ever come to completely losing yourself?"
-      },
-      {
-        "id": 68,
-        "text": "{{current_nickname}}, is there a person from your past you think about more than you probably should?"
-      },
-      {
-        "id": 69,
-        "text": "{{current_nickname}}, what's something about {{other_nickname}} that surprised you — that didn't match who you expected them to be?"
-      },
-      {
-        "id": 70,
-        "text": "{{current_nickname}}, have you ever resented someone you loved? What did that feel like?"
-      },
-      {
-        "id": 71,
-        "text": "{{current_nickname}}, what's the most dishonest you've ever been in a relationship, and why?"
-      },
-      {
-        "id": 72,
-        "text": "{{current_nickname}}, what's a fear about yourself that you don't say out loud?"
-      },
-      {
-        "id": 73,
-        "text": "{{current_nickname}}, what's something you want more of in your relationship with {{other_nickname}} that you haven't said yet?"
-      },
-      {
-        "id": 74,
-        "text": "{{current_nickname}}, if you could go back and handle one moment in your life completely differently, what would it be?"
-      },
-      {
-        "id": 75,
-        "text": "{{current_nickname}}, what's the loneliest you've ever felt, and what caused it?"
-      },
-      {
-        "id": 76,
-        "text": "{{current_nickname}}, is there a part of your inner world, thoughts, feelings, a whole side of you, that you don't think anyone has ever fully seen?"
-      }
-    ],
-    "dare": [
-      {
-        "id": 77,
-        "text": "{{current_nickname}}, give {{other_nickname}} a slow kiss that starts on their neck and ends at their jaw."
-      },
-      {
-        "id": 78,
-        "text": "{{current_nickname}}, whisper exactly what you want to do to {{other_nickname}} — nothing omitted."
-      },
-      {
-        "id": 79,
-        "text": "{{current_nickname}}, sit in {{other_nickname}}'s lap and kiss them for 15 seconds."
-      }
-    ]
-  }
+﻿{
+    "mild":  {
+                 "label":  "🟢 Mild",
+                 "truth":  [
+                               {
+                                   "id":  1,
+                                   "text":  "{{current_nickname}}, what\u0027s a childhood memory that still makes you smile when you think about it?"
+                               },
+                               {
+                                   "id":  2,
+                                   "text":  "{{current_nickname}}, what did your parents\u0027 relationship teach you, good or bad, about love?"
+                               },
+                               {
+                                   "id":  3,
+                                   "text":  "{{current_nickname}}, what\u0027s something you were really proud of before you met {{other_nickname}} that you don\u0027t think they know about?"
+                               },
+                               {
+                                   "id":  4,
+                                   "text":  "{{current_nickname}}, what\u0027s a value or belief you got from your upbringing that you\u0027ve kept as an adult?"
+                               },
+                               {
+                                   "id":  5,
+                                   "text":  "{{current_nickname}}, what did you imagine your life would look like at this age when you were a kid?"
+                               },
+                               {
+                                   "id":  6,
+                                   "text":  "{{current_nickname}}, who was your biggest role model growing up, and why?"
+                               },
+                               {
+                                   "id":  7,
+                                   "text":  "{{current_nickname}}, what\u0027s a small, everyday thing that makes you feel genuinely loved?"
+                               },
+                               {
+                                   "id":  8,
+                                   "text":  "{{current_nickname}}, what\u0027s a place you\u0027ve been to that genuinely changed how you see the world?"
+                               },
+                               {
+                                   "id":  9,
+                                   "text":  "{{current_nickname}}, what\u0027s the most important lesson a failure ever taught you?"
+                               },
+                               {
+                                   "id":  10,
+                                   "text":  "{{current_nickname}}, what\u0027s something you do differently from how you were raised, intentionally?"
+                               },
+                               {
+                                   "id":  11,
+                                   "text":  "{{current_nickname}}, what\u0027s a compliment you received that you still think about?"
+                               },
+                               {
+                                   "id":  12,
+                                   "text":  "{{current_nickname}}, what\u0027s something you\u0027re quietly proud of that you\u0027d never bring up yourself?"
+                               },
+                               {
+                                   "id":  13,
+                                   "text":  "{{current_nickname}}, what kind of old person do you want to be?"
+                               },
+                               {
+                                   "id":  14,
+                                   "text":  "{{current_nickname}}, what\u0027s a book, film, or song that genuinely shaped who you are?"
+                               },
+                               {
+                                   "id":  15,
+                                   "text":  "{{current_nickname}}, what\u0027s something you used to be embarrassed about that you\u0027ve made peace with?"
+                               },
+                               {
+                                   "id":  16,
+                                   "text":  "{{current_nickname}}, what does a perfect ordinary day look like to you?"
+                               }
+                           ],
+                 "dare":  [
+                              {
+                                  "id":  17,
+                                  "text":  "{{current_nickname}}, tell {{other_nickname}} one thing you\u0027ve never said out loud that you admire about {{other_nickname}}."
+                              },
+                              {
+                                  "id":  18,
+                                  "text":  "{{current_nickname}}, tell {{other_nickname}} what you were thinking about during your first kiss."
+                              }
+                          ]
+             },
+    "regular":  {
+                    "label":  "🟡 Regular",
+                    "truth":  [
+                                  {
+                                      "id":  19,
+                                      "text":  "{{current_nickname}}, what\u0027s the biggest mistake you\u0027ve made in a past relationship, and what did it teach you?"
+                                  },
+                                  {
+                                      "id":  20,
+                                      "text":  "{{current_nickname}}, what\u0027s something about your personality you actively work on improving?"
+                                  },
+                                  {
+                                      "id":  21,
+                                      "text":  "{{current_nickname}}, what does emotional safety mean to you, and have you ever truly felt it with someone?"
+                                  },
+                                  {
+                                      "id":  22,
+                                      "text":  "{{current_nickname}}, is there a version of yourself you\u0027ve left behind that you sometimes grieve?"
+                                  },
+                                  {
+                                      "id":  23,
+                                      "text":  "{{current_nickname}}, what\u0027s your biggest fear when it comes to long-term commitment?"
+                                  },
+                                  {
+                                      "id":  24,
+                                      "text":  "{{current_nickname}}, what\u0027s something you\u0027ve never told your family about yourself?"
+                                  },
+                                  {
+                                      "id":  25,
+                                      "text":  "{{current_nickname}}, have you ever stayed in a situation — friendship, job, relationship — way longer than you should have? Why?"
+                                  },
+                                  {
+                                      "id":  26,
+                                      "text":  "{{current_nickname}}, what\u0027s your relationship with your own ambition — does it drive you, scare you, or both?"
+                                  },
+                                  {
+                                      "id":  27,
+                                      "text":  "{{current_nickname}}, what\u0027s a belief about yourself that you\u0027re not sure is even true anymore?"
+                                  },
+                                  {
+                                      "id":  28,
+                                      "text":  "{{current_nickname}}, what\u0027s a period of your life you don\u0027t talk about much — and why?"
+                                  },
+                                  {
+                                      "id":  29,
+                                      "text":  "{{current_nickname}}, is there a friendship you lost that you still think about?"
+                                  },
+                                  {
+                                      "id":  30,
+                                      "text":  "{{current_nickname}}, what does \u0027home\u0027 mean to you — is it a place, a feeling, a person?"
+                                  },
+                                  {
+                                      "id":  31,
+                                      "text":  "{{current_nickname}}, what\u0027s something you\u0027ve sacrificed for someone else that you\u0027ve never fully made peace with?"
+                                  },
+                                  {
+                                      "id":  32,
+                                      "text":  "{{current_nickname}}, what\u0027s something you find genuinely hard to forgive in people?"
+                                  },
+                                  {
+                                      "id":  33,
+                                      "text":  "{{current_nickname}}, what\u0027s the most afraid you\u0027ve ever been, and how did you handle it?"
+                                  },
+                                  {
+                                      "id":  34,
+                                      "text":  "{{current_nickname}}, is there a version of your life you almost lived that you think about sometimes?"
+                                  },
+                                  {
+                                      "id":  35,
+                                      "text":  "{{current_nickname}}, what\u0027s something you need when you\u0027re at your lowest that you struggle to ask for?"
+                                  },
+                                  {
+                                      "id":  36,
+                                      "text":  "{{current_nickname}}, what\u0027s a boundary you have that you\u0027ve let people cross more than once?"
+                                  },
+                                  {
+                                      "id":  37,
+                                      "text":  "{{current_nickname}}, what\u0027s the harshest thing someone has said to you that stuck?"
+                                  },
+                                  {
+                                      "id":  38,
+                                      "text":  "{{current_nickname}}, when do you feel most like yourself?"
+                                  },
+                                  {
+                                      "id":  39,
+                                      "text":  "{{current_nickname}}, what\u0027s something about your past you\u0027ve reframed over time — something that hurt then but you\u0027ve found meaning in since?"
+                                  },
+                                  {
+                                      "id":  40,
+                                      "text":  "{{current_nickname}}, is there something you\u0027ve outgrown that used to define you?"
+                                  },
+                                  {
+                                      "id":  41,
+                                      "text":  "{{current_nickname}}, what\u0027s the most generous thing anyone has ever done for you?"
+                                  },
+                                  {
+                                      "id":  42,
+                                      "text":  "{{current_nickname}}, what part of growing up was hardest for you that you rarely talk about?"
+                                  },
+                                  {
+                                      "id":  43,
+                                      "text":  "{{current_nickname}}, what\u0027s a time you chose the safe option and later regretted it?"
+                                  },
+                                  {
+                                      "id":  44,
+                                      "text":  "{{current_nickname}}, what\u0027s something about your upbringing you\u0027re still quietly untangling?"
+                                  },
+                                  {
+                                      "id":  45,
+                                      "text":  "{{current_nickname}}, is there a version of success you gave up chasing — and are you at peace with that?"
+                                  },
+                                  {
+                                      "id":  46,
+                                      "text":  "{{current_nickname}}, have you ever been jealous of someone you genuinely cared about? What did that feel like?"
+                                  },
+                                  {
+                                      "id":  47,
+                                      "text":  "{{current_nickname}}, what\u0027s a habit or coping mechanism you have that you don\u0027t fully understand in yourself?"
+                                  },
+                                  {
+                                      "id":  48,
+                                      "text":  "{{current_nickname}}, what\u0027s something about the way you love people that you\u0027ve noticed could sometimes hurt them?"
+                                  },
+                                  {
+                                      "id":  49,
+                                      "text":  "{{current_nickname}}, is there a topic you avoid bringing up with {{other_nickname}} because you\u0027re not sure how they\u0027d react?"
+                                  },
+                                  {
+                                      "id":  50,
+                                      "text":  "{{current_nickname}}, what\u0027s the last time you cried, and what caused it?"
+                                  },
+                                  {
+                                      "id":  51,
+                                      "text":  "{{current_nickname}}, what\u0027s something you\u0027ve said you were \u0027fine\u0027 with that you actually weren\u0027t?"
+                                  },
+                                  {
+                                      "id":  52,
+                                      "text":  "{{current_nickname}}, what\u0027s a moment in your life that quietly changed who you were becoming?"
+                                  },
+                                  {
+                                      "id":  53,
+                                      "text":  "{{current_nickname}}, what would people be surprised to know genuinely frightens you?"
+                                  },
+                                  {
+                                      "id":  54,
+                                      "text":  "{{current_nickname}}, what\u0027s something you\u0027re holding onto that you probably need to let go of?"
+                                  },
+                                  {
+                                      "id":  55,
+                                      "text":  "{{current_nickname}}, when was the last time you felt truly seen by someone?"
+                                  },
+                                  {
+                                      "id":  56,
+                                      "text":  "{{current_nickname}}, what\u0027s something you\u0027ve wanted to change about yourself for years but haven\u0027t yet?"
+                                  }
+                              ],
+                    "dare":  [
+                                 {
+                                     "id":  57,
+                                     "text":  "{{current_nickname}}, hold {{other_nickname}}\u0027s face in your hands and maintain eye contact for 15 seconds without laughing."
+                                 },
+                                 {
+                                     "id":  58,
+                                     "text":  "{{current_nickname}}, tell {{other_nickname}} something specific you noticed about them in the first few weeks that you never mentioned."
+                                 },
+                                 {
+                                     "id":  59,
+                                     "text":  "{{current_nickname}}, tell {{other_nickname}} the thing you\u0027d be most afraid to lose about them."
+                                 },
+                                 {
+                                     "id":  60,
+                                     "text":  "{{current_nickname}}, look at {{other_nickname}} and say one thing you think they need to believe about themselves."
+                                 },
+                                 {
+                                     "id":  61,
+                                     "text":  "{{current_nickname}}, tell {{other_nickname}} about a moment with them that you secretly replayed afterward."
+                                 },
+                                 {
+                                     "id":  62,
+                                     "text":  "{{current_nickname}}, tell {{other_nickname}} the thing you were thinking the first time you realised you actually liked them."
+                                 },
+                                 {
+                                     "id":  121,
+                                     "text":  "{{current_nickname}}, kiss {{other_nickname}} on the forehead and whisper one word that describes how you feel about them right now."
+                                 },
+                                 {
+                                     "id":  122,
+                                     "text":  "{{current_nickname}}, sit as close to {{other_nickname}} as possible and hold their hand without saying anything for 30 seconds."
+                                 },
+                                 {
+                                     "id":  123,
+                                     "text":  "{{current_nickname}}, brush {{other_nickname}}\u0027s hair out of their face and tell them one thing you love about how they look right now."
+                                 },
+                                 {
+                                     "id":  124,
+                                     "text":  "{{current_nickname}}, put your arm around {{other_nickname}}, pull them close, and tell them one thing they make easier for you."
+                                 },
+                                 {
+                                     "id":  125,
+                                     "text":  "{{current_nickname}}, give {{other_nickname}} the longest, slowest hug you\u0027ve given them in a while — no talking until it\u0027s over."
+                                 },
+                                 {
+                                     "id":  126,
+                                     "text":  "{{current_nickname}}, trace {{other_nickname}}\u0027s hand with your fingertips, slowly, while maintaining eye contact."
+                                 },
+                                 {
+                                     "id":  127,
+                                     "text":  "{{current_nickname}}, lean in close to {{other_nickname}}\u0027s ear and tell them something you\u0027ve been meaning to say."
+                                 },
+                                 {
+                                     "id":  128,
+                                     "text":  "{{current_nickname}}, kiss {{other_nickname}} somewhere unexpected — not the lips — and explain why you chose that spot."
+                                 },
+                                 {
+                                     "id":  129,
+                                     "text":  "{{current_nickname}}, hold {{other_nickname}}\u0027s face in both hands, look at them for ten seconds, then kiss them once slowly."
+                                 },
+                                 {
+                                     "id":  130,
+                                     "text":  "{{current_nickname}}, whisper to {{other_nickname}} your favourite memory of the two of you."
+                                 },
+                                 {
+                                     "id":  131,
+                                     "text":  "{{current_nickname}}, run your fingers through {{other_nickname}}\u0027s hair slowly and tell them one thing you find irresistible about them."
+                                 },
+                                 {
+                                     "id":  132,
+                                     "text":  "{{current_nickname}}, cup {{other_nickname}}\u0027s face, look them in the eyes, and say \u0027I see you\u0027 — then explain what you mean."
+                                 },
+                                 {
+                                     "id":  133,
+                                     "text":  "{{current_nickname}}, pull {{other_nickname}} close by the waist and hold them there for 20 seconds in silence."
+                                 },
+                                 {
+                                     "id":  134,
+                                     "text":  "{{current_nickname}}, kiss {{other_nickname}} on the cheek, then the jaw, then their neck — once each, slowly."
+                                 },
+                                 {
+                                     "id":  135,
+                                     "text":  "{{current_nickname}}, take {{other_nickname}}\u0027s hand, press it to your chest, and tell them what you feel when they\u0027re close."
+                                 },
+                                 {
+                                     "id":  136,
+                                     "text":  "{{current_nickname}}, sit behind {{other_nickname}}, wrap your arms around them, and rest your chin on their shoulder for 30 seconds without speaking."
+                                 },
+                                 {
+                                     "id":  137,
+                                     "text":  "{{current_nickname}}, kiss {{other_nickname}} and don\u0027t stop until they do."
+                                 },
+                                 {
+                                     "id":  138,
+                                     "text":  "{{current_nickname}}, look at {{other_nickname}} like you\u0027re trying to memorise them — for 20 full seconds — then tell them what you were thinking."
+                                 },
+                                 {
+                                     "id":  139,
+                                     "text":  "{{current_nickname}}, gently pull {{other_nickname}} toward you and kiss them the way you would if you weren\u0027t sure you\u0027d see them again."
+                                 }
+                             ]
+                },
+    "spicy":  {
+                  "label":  "🔴 Spicy",
+                  "truth":  [
+                                {
+                                    "id":  63,
+                                    "text":  "{{current_nickname}}, what\u0027s something that happened in your past that you think still quietly affects you today?"
+                                },
+                                {
+                                    "id":  64,
+                                    "text":  "{{current_nickname}}, have you ever been truly heartbroken? What did it change about you?"
+                                },
+                                {
+                                    "id":  65,
+                                    "text":  "{{current_nickname}}, what\u0027s a dealbreaker you have that you\u0027d feel uncomfortable admitting out loud?"
+                                },
+                                {
+                                    "id":  66,
+                                    "text":  "{{current_nickname}}, is there anything about your past, a choice, a period of life, a version of you, that you feel ashamed of?"
+                                },
+                                {
+                                    "id":  67,
+                                    "text":  "{{current_nickname}}, what\u0027s something you want from life that you\u0027re afraid to tell {{other_nickname}} in case they don\u0027t want the same thing?"
+                                },
+                                {
+                                    "id":  68,
+                                    "text":  "{{current_nickname}}, have you ever fallen out of love with someone? What did that feel like?"
+                                },
+                                {
+                                    "id":  69,
+                                    "text":  "{{current_nickname}}, what\u0027s a part of yourself you\u0027ve hidden in past relationships to avoid conflict or rejection?"
+                                },
+                                {
+                                    "id":  70,
+                                    "text":  "{{current_nickname}}, is there something you\u0027ve always wanted to ask {{other_nickname}} but held back from?"
+                                },
+                                {
+                                    "id":  71,
+                                    "text":  "{{current_nickname}}, what\u0027s the most vulnerable you\u0027ve ever let yourself be with another person, and how did it go?"
+                                },
+                                {
+                                    "id":  72,
+                                    "text":  "{{current_nickname}}, what does your gut tell you about you and {{other_nickname}} — honestly, right now?"
+                                },
+                                {
+                                    "id":  73,
+                                    "text":  "{{current_nickname}}, what\u0027s the biggest way you\u0027ve changed as a person in the last five years — and are you happy about it?"
+                                },
+                                {
+                                    "id":  74,
+                                    "text":  "{{current_nickname}}, have you ever loved someone you knew wasn\u0027t right for you? What kept you there?"
+                                },
+                                {
+                                    "id":  75,
+                                    "text":  "{{current_nickname}}, what\u0027s something you want your relationship with {{other_nickname}} to give you that your life is currently missing?"
+                                },
+                                {
+                                    "id":  76,
+                                    "text":  "{{current_nickname}}, have you ever pushed someone away who genuinely cared about you? Why?"
+                                },
+                                {
+                                    "id":  77,
+                                    "text":  "{{current_nickname}}, what\u0027s the closest you\u0027ve ever come to completely losing yourself?"
+                                },
+                                {
+                                    "id":  78,
+                                    "text":  "{{current_nickname}}, is there a person from your past you think about more than you probably should?"
+                                },
+                                {
+                                    "id":  79,
+                                    "text":  "{{current_nickname}}, what\u0027s something about {{other_nickname}} that surprised you — that didn\u0027t match who you expected them to be?"
+                                },
+                                {
+                                    "id":  80,
+                                    "text":  "{{current_nickname}}, have you ever resented someone you loved? What did that feel like?"
+                                },
+                                {
+                                    "id":  81,
+                                    "text":  "{{current_nickname}}, what\u0027s the most dishonest you\u0027ve ever been in a relationship, and why?"
+                                },
+                                {
+                                    "id":  82,
+                                    "text":  "{{current_nickname}}, what\u0027s a fear about yourself that you don\u0027t say out loud?"
+                                },
+                                {
+                                    "id":  83,
+                                    "text":  "{{current_nickname}}, if you could go back and handle one moment in your life completely differently, what would it be?"
+                                },
+                                {
+                                    "id":  84,
+                                    "text":  "{{current_nickname}}, what\u0027s the loneliest you\u0027ve ever felt, and what caused it?"
+                                },
+                                {
+                                    "id":  85,
+                                    "text":  "{{current_nickname}}, is there a part of your inner world, thoughts, feelings, a whole side of you, that you don\u0027t think anyone has ever fully seen?"
+                                },
+                                {
+                                    "id":  86,
+                                    "text":  "{{current_nickname}}, what\u0027s the most alone you\u0027ve ever felt inside a relationship?"
+                                },
+                                {
+                                    "id":  87,
+                                    "text":  "{{current_nickname}}, is there a version of yourself that only came out with one particular person — and do you miss it?"
+                                },
+                                {
+                                    "id":  88,
+                                    "text":  "{{current_nickname}}, what\u0027s the most you\u0027ve ever changed for someone, and did it cost you anything?"
+                                },
+                                {
+                                    "id":  89,
+                                    "text":  "{{current_nickname}}, have you ever wanted to say something to {{other_nickname}} and stopped yourself at the last moment? What was it?"
+                                },
+                                {
+                                    "id":  90,
+                                    "text":  "{{current_nickname}}, what\u0027s something you\u0027ve never forgiven yourself for?"
+                                },
+                                {
+                                    "id":  91,
+                                    "text":  "{{current_nickname}}, is there a pattern in how your relationships end that you\u0027ve noticed in yourself?"
+                                },
+                                {
+                                    "id":  92,
+                                    "text":  "{{current_nickname}}, what would your younger self think of the relationship choices you\u0027ve made?"
+                                },
+                                {
+                                    "id":  93,
+                                    "text":  "{{current_nickname}}, have you ever felt like you were loving someone more than they were loving you — and stayed anyway?"
+                                },
+                                {
+                                    "id":  94,
+                                    "text":  "{{current_nickname}}, what\u0027s the truest thing you believe about yourself that you\u0027d never say in polite company?"
+                                },
+                                {
+                                    "id":  95,
+                                    "text":  "{{current_nickname}}, what\u0027s a moment you knew something was wrong in a relationship but pretended you didn\u0027t?"
+                                },
+                                {
+                                    "id":  96,
+                                    "text":  "{{current_nickname}}, is there anything about your parents\u0027 relationship dynamic that you\u0027re afraid you\u0027ve repeated?"
+                                },
+                                {
+                                    "id":  97,
+                                    "text":  "{{current_nickname}}, what\u0027s something you want from {{other_nickname}} that you\u0027ve never asked for?"
+                                },
+                                {
+                                    "id":  98,
+                                    "text":  "{{current_nickname}}, have you ever ended something — a friendship, a relationship — and later wondered if you made the right call?"
+                                },
+                                {
+                                    "id":  99,
+                                    "text":  "{{current_nickname}}, what does your internal voice say about yourself when things go badly?"
+                                },
+                                {
+                                    "id":  100,
+                                    "text":  "{{current_nickname}}, is there a version of love you\u0027ve experienced that scared you because of how much you needed it?"
+                                },
+                                {
+                                    "id":  101,
+                                    "text":  "{{current_nickname}}, what\u0027s a wound from your past that you think still quietly shapes how you love?"
+                                },
+                                {
+                                    "id":  102,
+                                    "text":  "{{current_nickname}}, have you ever loved someone and not told them in time?"
+                                },
+                                {
+                                    "id":  103,
+                                    "text":  "{{current_nickname}}, what\u0027s the most honest you\u0027ve ever been with someone — and what happened when you were?"
+                                },
+                                {
+                                    "id":  104,
+                                    "text":  "{{current_nickname}}, what\u0027s a secret you\u0027ve kept not to protect yourself, but to protect someone else?"
+                                },
+                                {
+                                    "id":  105,
+                                    "text":  "{{current_nickname}}, what\u0027s the most unguarded you\u0027ve ever let yourself be — and did it go the way you hoped?"
+                                }
+                            ],
+                  "dare":  [
+                               {
+                                   "id":  106,
+                                   "text":  "{{current_nickname}}, give {{other_nickname}} a slow kiss that starts on their neck and ends at their jaw."
+                               },
+                               {
+                                   "id":  107,
+                                   "text":  "{{current_nickname}}, whisper exactly what you want to do to {{other_nickname}} — nothing omitted."
+                               },
+                               {
+                                   "id":  108,
+                                   "text":  "{{current_nickname}}, sit in {{other_nickname}}\u0027s lap and kiss them for 15 seconds."
+                               },
+                               {
+                                   "id":  109,
+                                   "text":  "{{current_nickname}}, tell {{other_nickname}} the one thing you\u0027ve been afraid to need from them."
+                               },
+                               {
+                                   "id":  110,
+                                   "text":  "{{current_nickname}}, look {{other_nickname}} in the eyes and say the thing you\u0027ve been meaning to say but kept finding reasons not to."
+                               },
+                               {
+                                   "id":  111,
+                                   "text":  "{{current_nickname}}, whisper to {{other_nickname}} what you were most afraid of before this got serious."
+                               },
+                               {
+                                   "id":  112,
+                                   "text":  "{{current_nickname}}, tell {{other_nickname}} exactly what you felt the moment you knew you were falling for them."
+                               },
+                               {
+                                   "id":  113,
+                                   "text":  "{{current_nickname}}, share the most honest thing you\u0027ve thought about {{other_nickname}} that you\u0027ve kept to yourself."
+                               },
+                               {
+                                   "id":  114,
+                                   "text":  "{{current_nickname}}, tell {{other_nickname}} about a moment you were quietly proud of them but didn\u0027t say so."
+                               },
+                               {
+                                   "id":  115,
+                                   "text":  "{{current_nickname}}, take {{other_nickname}}\u0027s face in your hands and say the thing you hope they already know but might not."
+                               },
+                               {
+                                   "id":  116,
+                                   "text":  "{{current_nickname}}, kiss {{other_nickname}} the way you would if you needed to feel safe."
+                               },
+                               {
+                                   "id":  117,
+                                   "text":  "{{current_nickname}}, whisper to {{other_nickname}} what you want more of — physically or emotionally — that you\u0027ve held back from asking for."
+                               },
+                               {
+                                   "id":  118,
+                                   "text":  "{{current_nickname}}, press your forehead to {{other_nickname}}\u0027s and stay there in silence for 30 seconds."
+                               },
+                               {
+                                   "id":  119,
+                                   "text":  "{{current_nickname}}, tell {{other_nickname}} one thing about yourself you\u0027ve never told anyone — right now, out loud."
+                               },
+                               {
+                                   "id":  120,
+                                   "text":  "{{current_nickname}}, hold {{other_nickname}}\u0027s hands, look at them, and tell them the thing you\u0027d want them to remember about you."
+                               },
+                               {
+                                   "id":  140,
+                                   "text":  "{{current_nickname}}, undress one item of clothing off {{other_nickname}} — slowly."
+                               },
+                               {
+                                   "id":  141,
+                                   "text":  "{{current_nickname}}, kiss {{other_nickname}} from their collarbone up their neck, ending just below their ear."
+                               },
+                               {
+                                   "id":  142,
+                                   "text":  "{{current_nickname}}, describe in detail exactly what you want {{other_nickname}} to do to you tonight."
+                               },
+                               {
+                                   "id":  143,
+                                   "text":  "{{current_nickname}}, pin {{other_nickname}}\u0027s wrists above their head and hold them there while you kiss them."
+                               },
+                               {
+                                   "id":  144,
+                                   "text":  "{{current_nickname}}, run your hands slowly over {{other_nickname}}\u0027s body — anywhere you want — for 30 seconds while they stay still."
+                               },
+                               {
+                                   "id":  145,
+                                   "text":  "{{current_nickname}}, kiss {{other_nickname}} deeply and don\u0027t use your hands."
+                               },
+                               {
+                                   "id":  146,
+                                   "text":  "{{current_nickname}}, whisper the most explicit thing you\u0027ve thought about doing to {{other_nickname}} — in full detail."
+                               },
+                               {
+                                   "id":  147,
+                                   "text":  "{{current_nickname}}, bite {{other_nickname}}\u0027s lower lip while kissing them — let them feel it."
+                               },
+                               {
+                                   "id":  148,
+                                   "text":  "{{current_nickname}}, straddle {{other_nickname}} and kiss them slowly for 20 seconds — no rushing."
+                               },
+                               {
+                                   "id":  149,
+                                   "text":  "{{current_nickname}}, tell {{other_nickname}} exactly where and how you want to be touched right now."
+                               },
+                               {
+                                   "id":  150,
+                                   "text":  "{{current_nickname}}, kiss {{other_nickname}}\u0027s neck for 20 seconds without stopping."
+                               },
+                               {
+                                   "id":  151,
+                                   "text":  "{{current_nickname}}, slowly take off your own shirt or top while {{other_nickname}} watches."
+                               },
+                               {
+                                   "id":  152,
+                                   "text":  "{{current_nickname}}, pull {{other_nickname}} against you by the back of the neck and kiss them like you mean it."
+                               },
+                               {
+                                   "id":  153,
+                                   "text":  "{{current_nickname}}, trace your lips along {{other_nickname}}\u0027s jaw, down their neck, and stop at their collarbone."
+                               },
+                               {
+                                   "id":  154,
+                                   "text":  "{{current_nickname}}, tell {{other_nickname}} the most turned-on you\u0027ve ever been because of something they did — in detail."
+                               },
+                               {
+                                   "id":  155,
+                                   "text":  "{{current_nickname}}, let {{other_nickname}} kiss you anywhere they want for 30 seconds — you can\u0027t move."
+                               },
+                               {
+                                   "id":  156,
+                                   "text":  "{{current_nickname}}, whisper to {{other_nickname}} what you want them to do to you the moment this game is over."
+                               },
+                               {
+                                   "id":  157,
+                                   "text":  "{{current_nickname}}, take {{other_nickname}}\u0027s bottom lip between yours and hold it there."
+                               },
+                               {
+                                   "id":  158,
+                                   "text":  "{{current_nickname}}, press your body against {{other_nickname}}\u0027s and hold them close — no kissing, just contact — for 30 seconds."
+                               },
+                               {
+                                   "id":  159,
+                                   "text":  "{{current_nickname}}, run your hands through {{other_nickname}}\u0027s hair, grip it gently, tilt their head back, and kiss their neck."
+                               },
+                               {
+                                   "id":  160,
+                                   "text":  "{{current_nickname}}, describe the last time you were alone with {{other_nickname}} and what you were thinking about doing."
+                               },
+                               {
+                                   "id":  161,
+                                   "text":  "{{current_nickname}}, slowly unbutton or unzip something {{other_nickname}} is wearing, then stop and look at them."
+                               },
+                               {
+                                   "id":  162,
+                                   "text":  "{{current_nickname}}, kiss {{other_nickname}} somewhere you know makes them weak — and stay there."
+                               },
+                               {
+                                   "id":  163,
+                                   "text":  "{{current_nickname}}, tell {{other_nickname}} the single most intimate thing you want to experience with them that you haven\u0027t yet."
+                               },
+                               {
+                                   "id":  164,
+                                   "text":  "{{current_nickname}}, make {{other_nickname}} feel wanted — however you know best — for the next 30 seconds."
+                               }
+                           ]
+              }
 }

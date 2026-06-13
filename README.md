@@ -4,7 +4,7 @@ This is a small mobile-first static site with two mini-games: *36 Questions* and
 
 Quick notes:
 - The official Arthur Aron "36 Questions" text is not included by default. To enable it, paste the full list into `gh-pages/data/36questions.json` as a JSON array.
-- `gh-pages/data/tod_prompts.json` contains sample prompts for the three spice levels: `mild`, `regular`, `hot`.
+- `gh-pages/data/tod_prompts.json` contains sample prompts for the three spice levels: `mild`, `regular`, `spicy`.
 
 To preview locally:
 
