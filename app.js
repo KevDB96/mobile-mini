@@ -917,49 +917,7 @@ tokens = players.map(()=>0);
 
 // Init
 load36(); loadTod(); renderPlayerList(); updateTokenUI();
-// Attempt to auto-fetch persist token on startup if not configured
-async function autoFetchPersistToken(){
-  try{
-    const existing = localStorage.getItem('persist_token');
-    if(existing) return; // already set
-    const hosts = [];
-    // allow an explicit host stored by the user (useful when app is served from GitHub Pages)
-    try{ const ph = localStorage.getItem('persist_host'); if(ph) hosts.push(ph); }catch(e){}
-    try{ const hn = (window && window.location && window.location.hostname) ? window.location.hostname : null; if(hn) hosts.push(hn); }catch(e){}
-    hosts.push('127.0.0.1','localhost');
-    // if the app is served from a remote host (e.g. github.io) and we have no saved host,
-    // prompt the user once for the PC's LAN IP so the app can reach the persist server.
-    try{
-      const pageHost = (window && window.location && window.location.hostname) ? window.location.hostname : '';
-      const isPrivate = /^127\.|^10\.|^192\.168\.|^172\.(1[6-9]|2\d|3[0-1])\./.test(pageHost);
-      const hasSavedHost = hosts.length && hosts[0] && hosts[0] !== pageHost && hosts[0] !== '127.0.0.1' && hosts[0] !== 'localhost';
-      if(!isPrivate && !hasSavedHost){
-        try{
-          const p = prompt('Enter the PC LAN IP running the persist server (e.g. 192.168.1.42) so the app can fetch the token automatically. Leave blank to skip.');
-          if(p && p.trim()){ localStorage.setItem('persist_host', p.trim()); hosts.unshift(p.trim()); }
-        }catch(e){}
-      }
-    }catch(e){}
-    for(const h of hosts){
-      try{
-        const url = `http://${h}:34000/fetch-token`;
-        const res = await fetch(url, { method: 'GET' });
-        if(!res) continue;
-        if(res.ok){
-          const j = await res.json();
-          if(j && j.ok && j.token){
-            try{ localStorage.setItem('persist_token', j.token); }catch(e){}
-            try{ const st = qs('#persist-status'); if(st) st.textContent = 'Token fetched and saved'; }catch(e){}
-            console.log('Persist token fetched from', h);
-            return;
-          }
-        }
-      }catch(e){ /* try next host */ }
-    }
-  }catch(e){ console.warn('autoFetchPersistToken failed', e); }
-}
-// fire-and-forget auto-fetch
-autoFetchPersistToken();
+
 // Register service worker for PWA/offline support
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{
