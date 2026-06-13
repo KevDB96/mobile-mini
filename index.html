@@ -21,7 +21,6 @@
       <button id="settings-btn" class="settings">⚙</button>
       <div id="settings-menu" class="dropdown hidden">
         <button id="settings-nicknames" class="dropdown-item">Nicknames</button>
-        <button id="settings-persist" class="dropdown-item">Persistence</button>
       </div>
     </header>
     <!-- Persistent player strip: shows players and their tokens across screens -->
@@ -148,22 +147,6 @@
         <div class="controls">
           <button id="save-nicknames">Save</button>
           <button id="cancel-nicknames">Cancel</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="persist-modal" class="modal hidden">
-      <div class="modal-content">
-        <h3>Persistence / Local Server</h3>
-        <p>Set the local persist server token so the app can auto-save edits.</p>
-        <label>Persist Token<input id="persist-token" type="text" placeholder="replace-with-secret-token" /></label>
-        <div style="margin-top:8px"><span id="persist-status" style="font-size:90%;color:#666"></span></div>
-        <div class="controls">
-          <button id="save-persist">Save</button>
-          <button id="fetch-persist">Fetch Token</button>
-          <button id="test-persist">Test Server</button>
-          <button id="remove-persist">Remove</button>
-          <button id="cancel-persist">Cancel</button>
         </div>
       </div>
     </div>
