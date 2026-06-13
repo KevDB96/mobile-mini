@@ -14,8 +14,8 @@ function show(name){
   const activate = ()=>{
     Object.values(screens).forEach(s=>{ if(s && s.classList) s.classList.remove('active'); });
     const scr = screens[name]; if(scr && scr.classList) scr.classList.add('active');
-    // when showing TOD, ensure visual matches selected level
-    if(name === 'tod'){ try{ const levelEl = qs('#tod-level'); const level = levelEl ? levelEl.value : 'regular'; applyTodLevelVisual(level); }catch(e){} }
+    // when showing TOD, ensure visual matches selected level and sync heat button
+    if(name === 'tod'){ try{ const levelEl = qs('#tod-level'); const level = levelEl ? levelEl.value : 'regular'; applyTodLevelVisual(level); }catch(e){} try{ syncHeatTodButton(); }catch(e){} }
     // when showing spinner, auto-run the spin after a short delay
     if(name === 'spinner'){
       try{
@@ -109,6 +109,7 @@ let q36Index = 0;
 
 let todPrompts = {mild:{truth:[],dare:[]},regular:{truth:[],dare:[]},spicy:{truth:[],dare:[],heat:{dare:[],truth:[]}}};
 let heatMode = false;
+let stripChance = 0.10; // starts at 10%, ramps +10% each miss, resets on trigger
 // Track used prompts per-level (legacy) and a global session-level set to avoid repeats
 let usedTod = {mild:{truth:new Set(),dare:new Set()},regular:{truth:new Set(),dare:new Set()},spicy:{truth:new Set(),dare:new Set(),heat_dare:new Set()}};
 let usedTodSession = new Set(); // stores prompt text used during the current session
@@ -524,7 +525,7 @@ function updateTokenUI(){
     el.style.opacity = tokens[idx]>0 ? '1' : '0.45';
   });
   // also update result/player headers
-  const rp = qs('#result-player'); if(rp) rp.textContent = qs('#turn-player').textContent || '';
+  try{ const tp = qs('#turn-player'); const rp = qs('#result-player'); if(rp && tp) rp.textContent = tp.textContent || ''; }catch(e){}
 }
 
 function incToken(idx){ tokens[idx] = (tokens[idx]||0) + 1; if(tokens[idx] >= maxTokens){ return true; } updateTokenUI(); return false; }
@@ -792,6 +793,22 @@ on('#save-nicknames','click',()=>{
 on('#turn-truth','click',()=>{
   const player = qs('#turn-player').textContent;
   const level = qs('#tod-level').value;
+  // 50% chance truth becomes a dare when heat mode is on and level is spicy
+  if(heatMode && level === 'spicy' && Math.random() < 0.5){
+    const pick = pickTodPrompt(level,'dare') || null;
+    const promptRaw = pick && pick.promptObj ? pick.promptObj.text : 'No prompt available';
+    const other = players.find(p=>p!==player) || players[0];
+    const prompt = finalizePrompt(promptRaw, player, other, true);
+    qs('#result-player').textContent = player;
+    qs('#result-text').textContent = prompt;
+    try{ const n = qs('#result-prompt-num'); if(n) n.textContent = pick && pick.promptObj && pick.promptObj.id ? '#'+pick.promptObj.id : ''; }catch(e){}
+    const succ = qs('#result-success'); const fail = qs('#result-fail'); if(succ) succ.classList.remove('hidden'); if(fail) fail.classList.remove('hidden');
+    if(succ) succ.textContent = 'Did it!';
+    if(fail) fail.textContent = 'Coward!!';
+    setupTimerForResult(prompt);
+    show('result');
+    return;
+  }
   const pick = pickTodPrompt(level,'truth') || null;
   const promptRaw = pick && pick.promptObj ? pick.promptObj.text : 'No prompt available';
   const other = players.find(p=>p!==player) || players[0];
@@ -835,16 +852,19 @@ on('#result-success','click',()=>{
   const playerName = qs('#result-player').textContent;
   const idx = players.indexOf(playerName);
   if(idx<0) return;
-  // 10% chance of strip event on spicy level
+  // ramping strip chance on spicy level (starts 10%, +10% per miss, resets on trigger)
   try{
     const level = qs('#tod-level') ? qs('#tod-level').value : '';
-    if(level === 'spicy' && Math.random() < 0.10){
+    if(level === 'spicy' && Math.random() < stripChance){
       const other = players.find(p=>p!==playerName) || players[0];
       const target = (Math.random() < 0.5) ? playerName : other;
       qs('#strip-title').textContent = '🔥 Strip!';
       qs('#strip-text').textContent = `${target} removes one article of clothing of their choice.`;
       qs('#strip-modal').classList.remove('hidden');
+      stripChance = 0.10; // reset after trigger
       return;
+    } else if(level === 'spicy'){
+      stripChance = Math.min(stripChance + 0.10, 0.90); // ramp up on miss
     }
   }catch(e){}
   const reached = incToken(idx);
@@ -914,7 +934,7 @@ on('#tod-next','click',()=>{
 on('#tod-copy','click',()=>{ const txt = qs('#tod-text').textContent; if(!txt) return; navigator.clipboard.writeText(txt).then(()=>alert('Copied!')).catch(()=>{}); });
 
 // update visuals when level changes
-on('#tod-level','change',()=>{ try{ resetTodSession(); }catch(e){} const lv = qs('#tod-level').value; applyTodLevelVisual(lv); });
+on('#tod-level','change',()=>{ try{ resetTodSession(); }catch(e){} const lv = qs('#tod-level').value; applyTodLevelVisual(lv); try{ syncHeatTodButton(); }catch(e){} });
 
 // Quick change spice button removed — dropdown lives in footer now
 
@@ -925,7 +945,7 @@ document.addEventListener('click', (e)=>{
   // consume the initiating click so it doesn't bubble to other handlers (e.g., .back)
   try{ e.stopPropagation(); e.preventDefault(); }catch(ex){}
   const level = btn.dataset.level;
-  if(level){ const sel = qs('#tod-level'); if(sel) sel.value = level; applyTodLevelVisual(level); }
+  if(level){ const sel = qs('#tod-level'); if(sel) sel.value = level; applyTodLevelVisual(level); try{ syncHeatTodButton(); }catch(e){} }
   btn.classList.add('selected'); setTimeout(()=> btn.classList.remove('selected'), 380);
   try{ renderPlayerList(); }catch(e){}
   show('spinner');
@@ -933,18 +953,40 @@ document.addEventListener('click', (e)=>{
 
 function showUpgradeToast(level){ try{ const t = qs('#tod-upgrade'); const l = qs('#tod-upgrade-level'); if(!t) return; if(l) l.textContent = level; t.classList.remove('hidden'); t.classList.add('show'); setTimeout(()=>{ t.classList.remove('show'); t.classList.add('hidden'); }, 2200); }catch(e){} }
 
-// Heat toggle
-on('#heat-toggle','click',()=>{
-  heatMode = !heatMode;
-  const btn = qs('#heat-toggle');
+// Heat toggle — shared logic
+function setHeatMode(val){
+  heatMode = val;
+  // sync both toggle buttons
+  [qs('#heat-toggle'), qs('#heat-toggle-tod')].forEach(btn=>{
+    if(!btn) return;
+    btn.setAttribute('aria-pressed', heatMode ? 'true' : 'false');
+    btn.classList.toggle('active', heatMode);
+  });
+  // level-select button extras
+  const btn1 = qs('#heat-toggle');
+  if(btn1){
+    const desc = btn1.querySelector('.flame-desc');
+    if(desc) desc.textContent = heatMode ? 'Explicit mode — on' : 'Explicit mode — off';
+    const ico = btn1.querySelector('.flame-ico');
+    if(ico) ico.textContent = heatMode ? '🔞🔥' : '🔞';
+  }
+  // tod-screen button label
+  const btn2 = qs('#heat-toggle-tod');
+  if(btn2) btn2.textContent = heatMode ? '🔞 Explicit mode: on' : '🔞 Explicit mode: off';
+}
+
+function syncHeatTodButton(){
+  const btn = qs('#heat-toggle-tod');
   if(!btn) return;
-  btn.setAttribute('aria-pressed', heatMode ? 'true' : 'false');
-  btn.classList.toggle('active', heatMode);
-  const desc = btn.querySelector('.flame-desc');
-  if(desc) desc.textContent = heatMode ? 'Explicit mode — on' : 'Explicit mode — off';
-  const ico = btn.querySelector('.flame-ico');
-  if(ico) ico.textContent = heatMode ? '🔞🔥' : '🔞';
-});
+  const level = qs('#tod-level') ? qs('#tod-level').value : '';
+  btn.classList.toggle('hidden', level !== 'spicy');
+}
+
+on('#heat-toggle','click',()=>{ setHeatMode(!heatMode); });
+on('#heat-toggle-tod','click',()=>{ setHeatMode(!heatMode); });
+
+// Show/hide the in-screen heat toggle when level changes
+on('#tod-level','change',()=>{ syncHeatTodButton(); });
 
 
 
