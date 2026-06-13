@@ -124,15 +124,15 @@ function resetTodSession(){
 let players = ['Cutie','Zoetje'];
 let spinnerIndex = 0;
 let isSpinning = false;
-// Track last TOD selection for deletion/redo
-let lastTodChoice = null; // {prompt, level, index}
-let lastTodType = null; // 'truth' or 'dare'
-let lastTodActor = null;
 // tokens
 let tokens = [0,0];
 let maxTokens = 3;
 // track whether we've completed the first spinner pick
 let hasSpun = false;
+
+// Global prompt display counter
+let promptCounter = 0;
+function nextPromptNum(){ promptCounter++; return '#' + promptCounter; }
 
 async function load36(){
   try{
@@ -190,16 +190,14 @@ on('#q36-continue','click',()=>{
 // Load TOD prompts
 async function loadTod(){
   try{ const r = await fetch('data/tod_prompts.json'); if(!r.ok) throw 0; todPrompts = await r.json();
-    // Normalize prompts: convert string entries to objects { text, asked: [] }
+    // Normalize prompts: convert string entries to objects { text }
     ['mild','regular','spicy'].forEach(l=>{
       ['truth','dare'].forEach(t=>{
         const arr = (todPrompts[l] && todPrompts[l][t]) || [];
         todPrompts[l] = todPrompts[l] || {};
         todPrompts[l][t] = (arr || []).map(item=>{
           if(!item) return null;
-          if(typeof item === 'string') return { text: item, asked: [] };
-          // already object
-          if(item.text) item.asked = item.asked || [];
+          if(typeof item === 'string') return { text: item };
           return item;
         }).filter(Boolean);
       });
@@ -218,44 +216,6 @@ function rebuildUsedTodIndexes(){
       });
     });
   }catch(e){ console.warn('Failed to rebuild used TOD indexes', e); }
-}
-
-async function persistTodPrompts(){
-  // Attempt File System Access API first, fallback to download
-  const dataStr = JSON.stringify(todPrompts, null, 2);
-  // Try local persist server (localhost) first if token present in localStorage
-  try{
-    const token = localStorage.getItem('persist_token');
-    if(token){
-      // try sensible hosts in order: the host serving the app (useful when mobile opens app from PC), then localhost addresses
-      const hosts = [];
-      try{ const hn = (window && window.location && window.location.hostname) ? window.location.hostname : null; if(hn) hosts.push(hn); }catch(e){}
-      hosts.push('127.0.0.1','localhost');
-      for(const h of hosts){
-        try{
-          const url = `http://${h}:34000/persist-tod`;
-          const r = await fetch(url, { method:'POST', headers: { 'Content-Type':'application/json', 'X-Persist-Token': token }, body: JSON.stringify({ todPrompts, commitMessage: 'Auto-persist tod_prompts' }), });
-          if(r && r.ok){ try{ const j = await r.json(); console.log('Local persist responded', j, 'host', h); }catch(e){} return true; }
-        }catch(e){ console.warn('Local persist server not available at', h, e); }
-      }
-    }
-  }catch(e){/*ignore*/}
-  try{
-    if(window.showSaveFilePicker){
-      const handle = await window.showSaveFilePicker({ suggestedName: 'tod_prompts.json', types:[{ description: 'JSON', accept: {'application/json': ['.json']} }] });
-      const writable = await handle.createWritable();
-      await writable.write(dataStr);
-      await writable.close();
-      return true;
-    }
-  }catch(e){ /* fallthrough to download fallback */ }
-  try{
-    const blob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = 'tod_prompts.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    alert('A copy of updated tod_prompts.json was downloaded. Replace data/tod_prompts.json in your project to persist the deletion.');
-    return false;
-  }catch(e){ console.warn('Failed to persist tod_prompts.json', e); return false; }
 }
 
 // Timer utilities
@@ -453,14 +413,12 @@ function finalizePrompt(rawText, actor, other, directedAtPlayer){
 
 function setupTimerForTod(text){ clearTimer(); const seconds = parseSecondsFromText(text); const area = qs('#tod-timer-area'); const display = qs('#tod-timer-display'); const startBtn = qs('#tod-timer-start'); const nextBtn = qs('#tod-next'); if(seconds>0){ area.classList.remove('hidden'); display.textContent = formatMMSS(seconds); nextBtn.disabled = true; startBtn.disabled = false; startBtn.onclick = ()=> startCountdown(seconds, display, ()=>{}, startBtn, nextBtn); } else { area.classList.add('hidden'); nextBtn.disabled = false; } }
 
-function pickTodPrompt(level, type, actor){
+function pickTodPrompt(level, type){
   const levels = ['mild','regular','spicy'];
   const list = (todPrompts[level] && todPrompts[level][type]) || [];
   if(!list.length) return null;
   // prefer prompts not used in this session
   let available = list.map((v,i)=>i).filter(i=>!usedTodSession.has(list[i] && list[i].text));
-  // filter out prompts already asked to this actor (persistent across sessions)
-  if(actor){ available = available.filter(i=>{ const p = list[i]; return !(p && Array.isArray(p.asked) && p.asked.includes(actor)); }); }
   if(available.length===0){
     // try hotter levels for unused prompts first
     const cur = levels.indexOf(level);
@@ -473,10 +431,7 @@ function pickTodPrompt(level, type, actor){
         if(qs('#tod-level')) qs('#tod-level').value = nl;
         applyTodLevelVisual(nl);
         showUpgradeToast(nl);
-        // filter by actor when promoting levels
-        const filteredNavail = actor ? navail.filter(i=>{ const p = nlist[i]; return !(p && Array.isArray(p.asked) && p.asked.includes(actor)); }) : navail;
-        if(filteredNavail.length === 0) { /* no candidate here, continue searching */ };
-        const choiceIndex = (filteredNavail.length>0 ? filteredNavail : navail)[Math.floor(Math.random()*((filteredNavail.length>0?filteredNavail:navail).length))];
+        const choiceIndex = navail[Math.floor(Math.random()*navail.length)];
         usedTod[nl][type].add(choiceIndex);
         usedTodSession.add(nlist[choiceIndex] && nlist[choiceIndex].text);
         return { promptObj: nlist[choiceIndex], level: nl, index: choiceIndex, type };
@@ -487,11 +442,7 @@ function pickTodPrompt(level, type, actor){
     for(let li=0; li<levels.length; li++){
       const ll = levels[li];
       const llist = (todPrompts[ll] && todPrompts[ll][type]) || [];
-      llist.forEach((p,i)=>{ if(!usedTodSession.has(p && p.text)){
-          if(actor && Array.isArray(p.asked) && p.asked.includes(actor)) return; // skip prompts already asked to actor
-          crossAvail.push({level:ll,index:i,promptObj:p});
-        }
-      });
+      llist.forEach((p,i)=>{ if(!usedTodSession.has(p && p.text)) crossAvail.push({level:ll,index:i,promptObj:p}); });
     }
     if(crossAvail.length>0){
       const chosen = crossAvail[Math.floor(Math.random()*crossAvail.length)];
@@ -510,30 +461,6 @@ function pickTodPrompt(level, type, actor){
   usedTod[level][type].add(idx);
   usedTodSession.add(list[idx] && list[idx].text);
   return { promptObj: list[idx], level, index: idx, type };
-}
-
-// Mark that a prompt was asked to a player; if it's been asked to both players, remove it permanently
-async function markPromptAsked(pick, playerName){
-  try{
-    if(!pick || !pick.promptObj) return;
-    const lvl = pick.level; const typ = pick.type;
-    const list = (todPrompts[lvl] && todPrompts[lvl][typ]) || [];
-    const obj = list[pick.index] || pick.promptObj;
-    if(!obj) return;
-    obj.asked = obj.asked || [];
-    if(!obj.asked.includes(playerName)) obj.asked.push(playerName);
-    // track used prompt in this session
-    usedTodSession.add(obj.text);
-    rebuildUsedTodIndexes();
-    // if asked to both players, delete permanently and persist
-    if(obj.asked.length >= 2){
-      const idx = list.findIndex(p=>p === obj || (p && p.text === obj.text));
-      if(idx >= 0){ list.splice(idx,1); }
-      // remove from session used set
-      try{ usedTodSession.delete(obj.text); }catch(e){}
-      await persistTodPrompts();
-    }
-  }catch(e){ console.warn('Failed to mark prompt asked', e); }
 }
 
 // Player management
@@ -916,13 +843,13 @@ on('#save-nicknames','click',()=>{
 on('#turn-truth','click',()=>{
   const player = qs('#turn-player').textContent;
   const level = qs('#tod-level').value;
-  const pick = pickTodPrompt(level,'truth', player) || null;
+  const pick = pickTodPrompt(level,'truth') || null;
   const promptRaw = pick && pick.promptObj ? pick.promptObj.text : 'No prompt available';
-  lastTodChoice = pick; lastTodType = 'truth'; lastTodActor = player;
   const other = players.find(p=>p!==player) || players[0];
   const prompt = finalizePrompt(promptRaw, player, other, true);
   qs('#result-player').textContent = player;
   qs('#result-text').textContent = prompt;
+  try{ const n = qs('#result-prompt-num'); if(n) n.textContent = nextPromptNum(); }catch(e){}
   // reveal confirm/fail buttons
   const succ = qs('#result-success'); const fail = qs('#result-fail'); if(succ) succ.classList.remove('hidden'); if(fail) fail.classList.remove('hidden');
   // set button labels for truth
@@ -930,26 +857,23 @@ on('#turn-truth','click',()=>{
   if(fail) fail.textContent = 'Liar, liar, pants on fire';
   setupTimerForResult(prompt);
   show('result');
-  // mark asked asynchronously
-  try{ markPromptAsked(pick, player); }catch(e){}
 });
 on('#turn-dare','click',()=>{
   const player = qs('#turn-player').textContent;
   const level = qs('#tod-level').value;
-  const pick = pickTodPrompt(level,'dare', player) || null;
+  const pick = pickTodPrompt(level,'dare') || null;
   const promptRaw = pick && pick.promptObj ? pick.promptObj.text : 'No prompt available';
-  lastTodChoice = pick; lastTodType = 'dare'; lastTodActor = player;
   const other = players.find(p=>p!==player) || players[0];
   const prompt = finalizePrompt(promptRaw, player, other, true);
   qs('#result-player').textContent = player;
   qs('#result-text').textContent = prompt;
+  try{ const n = qs('#result-prompt-num'); if(n) n.textContent = nextPromptNum(); }catch(e){}
   const succ = qs('#result-success'); const fail = qs('#result-fail'); if(succ) succ.classList.remove('hidden'); if(fail) fail.classList.remove('hidden');
   // set button labels for dare
   if(succ) succ.textContent = 'Did it!';
   if(fail) fail.textContent = 'Coward!!';
   setupTimerForResult(prompt);
   show('result');
-  try{ markPromptAsked(pick, player); }catch(e){}
 });
 
 on('#result-next','click',()=>{ setTimeout(()=> show('spinner'), 800); });
@@ -988,40 +912,6 @@ on('#result-fail','click',()=>{
   setTimeout(()=> show('spinner'), 800);
 });
 
-on('#result-delete','click', async ()=>{
-  try{
-    const delBtn = qs('#result-delete');
-    // ask for confirmation first
-    const ok = confirm('Delete this prompt? This action cannot be undone.');
-    if(!ok){ if(delBtn) delBtn.disabled = false; return; }
-    if(delBtn) delBtn.disabled = true;
-    // hide confirm/fail if visible
-    try{ const s = qs('#result-success'); const f = qs('#result-fail'); if(s) s.classList.add('hidden'); if(f) f.classList.add('hidden'); }catch(e){}
-    if(!lastTodChoice || !lastTodType){ alert('No prompt metadata available to delete.'); if(delBtn) delBtn.disabled = false; return; }
-    const lvl = lastTodChoice.level;
-    const typ = lastTodType;
-    const raw = (lastTodChoice && lastTodChoice.promptObj) ? lastTodChoice.promptObj.text : (lastTodChoice && lastTodChoice.prompt) || null;
-    // remove prompt from in-memory prompts array by index if available
-    const list = (todPrompts[lvl] && todPrompts[lvl][typ]) || [];
-    const idx = (lastTodChoice && typeof lastTodChoice.index === 'number') ? lastTodChoice.index : list.findIndex(p=>p && (p.text === raw));
-    if(idx >= 0){ list.splice(idx,1); }
-    // remove from session-used set and rebuild index trackers
-    try{ if(raw) usedTodSession.delete(raw); rebuildUsedTodIndexes(); }catch(e){}
-    // persist change (FileSystem API or download fallback)
-    await persistTodPrompts();
-    // immediately pick next prompt for same player/type
-    const player = lastTodActor || qs('#result-player').textContent || players[0];
-    const other = players.find(p=>p!==player) || players[0];
-    const nextPick = pickTodPrompt(lvl, typ) || null;
-    const nextRaw = nextPick && nextPick.promptObj ? nextPick.promptObj.text : null;
-    lastTodChoice = nextPick; lastTodType = typ; lastTodActor = player;
-    const nextPrompt = finalizePrompt(nextRaw, player, other, true) || nextRaw || 'No prompts available';
-    qs('#result-text').textContent = nextPrompt;
-    setupTimerForResult(nextPrompt);
-    if(delBtn) delBtn.disabled = false;
-  }catch(e){ console.warn('Failed to delete prompt', e); try{ if(qs('#result-delete')) qs('#result-delete').disabled = false; }catch(_){} }
-});
-
 on('#drink-ok','click',()=>{ qs('#drink-modal').classList.add('hidden'); try{ show('spinner'); }catch(e){} });
 
 // Quick TOD buttons on main page (keeps backward compatibility)
@@ -1033,8 +923,8 @@ on('#tod-truth','click',()=>{
   const other = players[1] || 'Player 2';
   const p = finalizePrompt(pRaw, actor, other, true) || pRaw || 'No prompts';
   qs('#tod-text').textContent = p;
+  try{ const n = qs('#tod-prompt-num'); if(n) n.textContent = nextPromptNum(); }catch(e){}
   setupTimerForTod(p);
-  try{ markPromptAsked(pick, actor); }catch(e){}
 });
 on('#tod-dare','click',()=>{
   const level = qs('#tod-level').value;
@@ -1044,8 +934,8 @@ on('#tod-dare','click',()=>{
   const other = players[1] || 'Player 2';
   const p = finalizePrompt(pRaw, actor, other, true) || pRaw || 'No prompts';
   qs('#tod-text').textContent = p;
+  try{ const n = qs('#tod-prompt-num'); if(n) n.textContent = nextPromptNum(); }catch(e){}
   setupTimerForTod(p);
-  try{ markPromptAsked(pick, actor); }catch(e){}
 });
 on('#tod-next','click',()=>{
   const t = Math.random()>0.5?'truth':'dare';
@@ -1056,8 +946,8 @@ on('#tod-next','click',()=>{
   const other = players[1] || 'Player 2';
   const p = finalizePrompt(pRaw,actor,other,true) || pRaw || 'No prompts';
   qs('#tod-text').textContent = p;
+  try{ const n = qs('#tod-prompt-num'); if(n) n.textContent = nextPromptNum(); }catch(e){}
   setupTimerForTod(p);
-  try{ markPromptAsked(pick, actor); }catch(e){}
 });
 on('#tod-copy','click',()=>{ const txt = qs('#tod-text').textContent; if(!txt) return; navigator.clipboard.writeText(txt).then(()=>alert('Copied!')).catch(()=>{}); });
 
@@ -1079,7 +969,7 @@ document.addEventListener('click', (e)=>{
   show('spinner');
 });
 
-function showUpgradeToast(level){ try{ const t = qs('#tod-upgrade'); const l = qs('#tod-upgrade-level'); if(!t) return; if(l) l.textContent = level; t.classList.remove('hidden'); t.classList.add('show'); setTimeout(()=>{ t.classList.remove('show'); t.classList.add('hidden'); }, 2200); }catch(e){}
+function showUpgradeToast(level){ try{ const t = qs('#tod-upgrade'); const l = qs('#tod-upgrade-level'); if(!t) return; if(l) l.textContent = level; t.classList.remove('hidden'); t.classList.add('show'); setTimeout(()=>{ t.classList.remove('show'); t.classList.add('hidden'); }, 2200); }catch(e){} }
 
 
 
