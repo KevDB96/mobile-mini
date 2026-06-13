@@ -806,7 +806,7 @@ on('#turn-truth','click',()=>{
     if(succ) succ.textContent = 'Did it!';
     if(fail) fail.textContent = 'Coward!!';
     setupTimerForResult(prompt);
-    show('result');
+    showResultWithStripCheck();
     return;
   }
   const pick = pickTodPrompt(level,'truth') || null;
@@ -822,7 +822,7 @@ on('#turn-truth','click',()=>{
   if(succ) succ.textContent = 'Told the truth!';
   if(fail) fail.textContent = 'Liar, liar, pants on fire';
   setupTimerForResult(prompt);
-  show('result');
+  showResultWithStripCheck();
 });
 on('#turn-dare','click',()=>{
   const player = qs('#turn-player').textContent;
@@ -839,34 +839,37 @@ on('#turn-dare','click',()=>{
   if(succ) succ.textContent = 'Did it!';
   if(fail) fail.textContent = 'Coward!!';
   setupTimerForResult(prompt);
-  show('result');
+  showResultWithStripCheck();
 });
 
-on('#result-next','click',()=>{ setTimeout(()=> show('spinner'), 800); });
+// Show result, checking strip chance first (spicy only). Strip fires BEFORE the prompt appears.
+function showResultWithStripCheck(){
+  const level = qs('#tod-level') ? qs('#tod-level').value : '';
+  if(level === 'spicy' && Math.random() < stripChance){
+    const playerName = qs('#result-player').textContent;
+    const other = players.find(p=>p!==playerName) || players[0];
+    const target = Math.random() < 0.5 ? playerName : other;
+    qs('#strip-title').textContent = '🔥 Strip!';
+    qs('#strip-text').textContent = `${target} removes one article of clothing of their choice.`;
+    qs('#strip-modal').classList.remove('hidden');
+    stripChance = 0.10;
+  } else {
+    if(level === 'spicy') stripChance = Math.min(stripChance + 0.10, 0.90);
+    show('result');
+  }
+}
+
+on('#strip-ok','click',()=>{ qs('#strip-modal').classList.add('hidden'); show('result'); });
 // hide confirm/fail buttons when navigating away from result
 on('#result-next','click', ()=>{ const succ = qs('#result-success'); const fail = qs('#result-fail'); if(succ) succ.classList.add('hidden'); if(fail) fail.classList.add('hidden'); });
-on('#strip-ok','click',()=>{ qs('#strip-modal').classList.add('hidden'); setTimeout(()=> show('spinner'), 800); });
+on('#result-next','click',()=>{ setTimeout(()=> show('spinner'), 800); });
 on('#result-success','click',()=>{
   // hide confirm/fail immediately
   try{ const s = qs('#result-success'); const f = qs('#result-fail'); if(s) s.classList.add('hidden'); if(f) f.classList.add('hidden'); }catch(e){}
   const playerName = qs('#result-player').textContent;
   const idx = players.indexOf(playerName);
   if(idx<0) return;
-  // ramping strip chance on spicy level (starts 10%, +10% per miss, resets on trigger)
-  try{
-    const level = qs('#tod-level') ? qs('#tod-level').value : '';
-    if(level === 'spicy' && Math.random() < stripChance){
-      const other = players.find(p=>p!==playerName) || players[0];
-      const target = (Math.random() < 0.5) ? playerName : other;
-      qs('#strip-title').textContent = '🔥 Strip!';
-      qs('#strip-text').textContent = `${target} removes one article of clothing of their choice.`;
-      qs('#strip-modal').classList.remove('hidden');
-      stripChance = 0.10; // reset after trigger
-      return;
-    } else if(level === 'spicy'){
-      stripChance = Math.min(stripChance + 0.10, 0.90); // ramp up on miss
-    }
-  }catch(e){}
+  // ramping strip chance handled in showResultWithStripCheck — nothing to do here
   const reached = incToken(idx);
   if(reached){ // other player drinks
     const other = (idx===0?1:0);
@@ -956,23 +959,11 @@ function showUpgradeToast(level){ try{ const t = qs('#tod-upgrade'); const l = q
 // Heat toggle — shared logic
 function setHeatMode(val){
   heatMode = val;
-  // sync both toggle buttons
-  [qs('#heat-toggle'), qs('#heat-toggle-tod')].forEach(btn=>{
-    if(!btn) return;
-    btn.setAttribute('aria-pressed', heatMode ? 'true' : 'false');
-    btn.classList.toggle('active', heatMode);
-  });
-  // level-select button extras
-  const btn1 = qs('#heat-toggle');
-  if(btn1){
-    const desc = btn1.querySelector('.flame-desc');
-    if(desc) desc.textContent = heatMode ? 'Explicit mode — on' : 'Explicit mode — off';
-    const ico = btn1.querySelector('.flame-ico');
-    if(ico) ico.textContent = heatMode ? '🔞🔥' : '🔞';
-  }
-  // tod-screen button label
-  const btn2 = qs('#heat-toggle-tod');
-  if(btn2) btn2.textContent = heatMode ? '🔞 Explicit mode: on' : '🔞 Explicit mode: off';
+  const btn = qs('#heat-toggle-tod');
+  if(!btn) return;
+  btn.setAttribute('aria-pressed', heatMode ? 'true' : 'false');
+  btn.classList.toggle('active', heatMode);
+  btn.textContent = heatMode ? '🔞 Explicit mode: on' : '🔞 Explicit mode: off';
 }
 
 function syncHeatTodButton(){
@@ -982,7 +973,6 @@ function syncHeatTodButton(){
   btn.classList.toggle('hidden', level !== 'spicy');
 }
 
-on('#heat-toggle','click',()=>{ setHeatMode(!heatMode); });
 on('#heat-toggle-tod','click',()=>{ setHeatMode(!heatMode); });
 
 // Show/hide the in-screen heat toggle when level changes
