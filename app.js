@@ -16,6 +16,7 @@ function show(name){
     const scr = screens[name]; if(scr && scr.classList) scr.classList.add('active');
     // when showing TOD, ensure visual matches selected level and sync heat button
     if(name === 'tod'){ try{ const levelEl = qs('#tod-level'); const level = levelEl ? levelEl.value : 'regular'; applyTodLevelVisual(level); }catch(e){} try{ syncHeatTodButton(); }catch(e){} }
+    if(name === 'turn'){ try{ syncHeatTodButton(); }catch(e){} }
     // when showing spinner, auto-run the spin after a short delay
     if(name === 'spinner'){
       try{
@@ -959,21 +960,23 @@ function showUpgradeToast(level){ try{ const t = qs('#tod-upgrade'); const l = q
 // Heat toggle — shared logic
 function setHeatMode(val){
   heatMode = val;
-  const btn = qs('#heat-toggle-tod');
-  if(!btn) return;
-  btn.setAttribute('aria-pressed', heatMode ? 'true' : 'false');
-  btn.classList.toggle('active', heatMode);
-  btn.textContent = heatMode ? '🔞 Explicit mode: on' : '🔞 Explicit mode: off';
+  syncHeatTodButton();
 }
 
 function syncHeatTodButton(){
-  const btn = qs('#heat-toggle-tod');
-  if(!btn) return;
   const level = qs('#tod-level') ? qs('#tod-level').value : '';
-  btn.classList.toggle('hidden', level !== 'spicy');
+  const isSpicy = level === 'spicy';
+  [qs('#heat-toggle-tod'), qs('#heat-toggle-turn')].forEach(btn=>{
+    if(!btn) return;
+    btn.classList.toggle('hidden', !isSpicy);
+    btn.setAttribute('aria-pressed', heatMode ? 'true' : 'false');
+    btn.classList.toggle('active', heatMode);
+    btn.textContent = heatMode ? '🔞 Explicit mode: on' : '🔞 Explicit mode: off';
+  });
 }
 
 on('#heat-toggle-tod','click',()=>{ setHeatMode(!heatMode); });
+on('#heat-toggle-turn','click',()=>{ setHeatMode(!heatMode); });
 
 // Show/hide the in-screen heat toggle when level changes
 on('#tod-level','change',()=>{ syncHeatTodButton(); });
